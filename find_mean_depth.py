@@ -37,7 +37,9 @@ def find_average_element(X):
          ('1%AEP10m_P9_unblocked_depth_max', 1.0749958),
          ('1%AEP10m_P3_unblocked_depth_max', 1.0737971)]
 	 
-     Note i have added WL instead of depth below
+     The output for X should be 1.0747306, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
+	 
+     Note by PM: I have added WL instead of depth below
      
      X1 = [('1%AEP10m_P1_unblocked_stage_max', 1.8705895),
      ('1%AEP10m_P10_unblocked_stage_max', 1.8682307),
