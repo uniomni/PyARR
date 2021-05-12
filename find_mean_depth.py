@@ -25,6 +25,19 @@ def find_average_element(X):
     Example
     
     With input 
+    
+     X = [('1%AEP10m_P4_unblocked_depth_max', 1.0737015),
+         ('1%AEP10m_P8_unblocked_depth_max', 1.0736489),
+         ('1%AEP10m_P7_unblocked_depth_max', 1.0767846),
+         ('1%AEP10m_P6_unblocked_depth_max', 1.0747306),
+         ('1%AEP10m_P2_unblocked_depth_max', 1.073645),
+         ('1%AEP10m_P10_unblocked_depth_max', 1.0737189),
+         ('1%AEP10m_P1_unblocked_depth_max', 1.0760777),
+         ('1%AEP10m_P5_unblocked_depth_max', 1.0748001),
+         ('1%AEP10m_P9_unblocked_depth_max', 1.0749958),
+         ('1%AEP10m_P3_unblocked_depth_max', 1.0737971)]
+	 
+     Note i have added WL instead of depth below
      
      X1 = [('1%AEP10m_P1_unblocked_stage_max', 1.8705895),
      ('1%AEP10m_P10_unblocked_stage_max', 1.8682307),
