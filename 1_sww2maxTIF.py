@@ -24,7 +24,8 @@ from anuga.file_conversion import sww2dem
 from anuga.utilities import plot_utils
    
 #### ENTER DIRECTORY LOCATION HERE ###
-location = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
+#location = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
+location = '/Work/Petar-2021/PyARR-data/' # this is critical for the scripts to run, you must put all your files in a folder called files
 ######################################
 
 def sww2maxTIF(directory, filepattern='*.sww'):
@@ -39,13 +40,13 @@ def sww2maxTIF(directory, filepattern='*.sww'):
             swwFile=filename, 
             output_quantities=['depth', 'velocity', 'depthIntegratedVelocity', 'stage'],
             output_dir=fromdir,
-   		    myTimeStep='max',
-   		    CellSize=1.0, 
-   		    velocity_extrapolation=True, 
-   		    min_allowed_height=0.01, 
-   		    EPSG_CODE=28356, #EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web 
-   		    verbose=False, 
-   		    k_nearest_neighbours=3)
+   	    myTimeStep='max',
+   	    CellSize=1.0, 
+   	    velocity_extrapolation=True, 
+   	    min_allowed_height=0.01, 
+   	    EPSG_CODE=28356, # EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web 
+   	    verbose=False, 
+   	    k_nearest_neighbours=3)
     
     src_dir = fromdir
     os.chdir(src_dir)
@@ -82,15 +83,18 @@ def sww2maxTIF(directory, filepattern='*.sww'):
 data_directory = expanduser("~")+location
 
 storms = [1]#2,5,10,20] # 1=1%AEP, 2=2%AEP etc
-durations = [10,15,20,25,30,45,60,90,120,180,270,360,540,720,1080,1440,1800,2160,2880,4320]
+durations = [10] #,15,20,25,30,45,60,90,120,180,270,360,540,720,1080,1440,1800,2160,2880,4320]
 
 for storm in storms:
-	for duration in durations:
-		event = str(storm)+'%AEP'+str(duration)+'m'
-		try:
-			fromdir = data_directory+event
-			check_polys = sww2maxTIF(fromdir)
-			
-		except:
-			print (event+' does not exist')
-			pass   
+    for duration in durations:
+        event = str(storm)+'%AEP'+str(duration)+'m_unblocked'
+        print(event)
+        fromdir = data_directory+event        
+        check_polys = sww2maxTIF(fromdir)        
+#        try:
+#            fromdir = data_directory+event
+#            check_polys = sww2maxTIF(fromdir)#
+#	    
+#        except:
+#            print (event+' does not exist')
+#            pass   
