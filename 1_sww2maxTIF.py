@@ -91,10 +91,4 @@ for storm in storms:
         print(event)
         fromdir = data_directory+event        
         check_polys = sww2maxTIF(fromdir)        
-#        try:
-#            fromdir = data_directory+event
-#            check_polys = sww2maxTIF(fromdir)#
-#	    
-#        except:
-#            print (event+' does not exist')
-#            pass   
+
