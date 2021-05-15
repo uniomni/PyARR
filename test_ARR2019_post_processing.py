@@ -1,6 +1,6 @@
 import unittest
 
-from find_mean_depth import find_average_element
+from ARR2019_post_processing import find_average_element
 
 class TestFindMeanDepth(unittest.TestCase):
 
