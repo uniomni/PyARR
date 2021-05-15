@@ -18,15 +18,16 @@ import os.path
 from os.path import *
 
 #### ENTER DIRECTORY LOCATION HERE ###
-location = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
+#location = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
+location = '/Work/Petar-2021/PyARR-data/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
 ######################################
 
-def meanTIF2maxTIF(directory, filepattern='*.tif'):
-    pattern = os.path.join(directory, filepattern)
-    directory = glob.glob(pattern) 
+def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
+    pattern = os.path.join(fromdir, filepattern)
+    filenames = glob.glob(pattern) 
     
     res = []
-    for filename in directory:
+    for filename in filenames:
         ds = gdal.Open(filename)
         res.append(ds.GetRasterBand(1).ReadAsArray()) # We assume that all rasters has a single band
     stacked = np.dstack(res) # We assume that all rasters have the same dimensions
@@ -37,10 +38,11 @@ def meanTIF2maxTIF(directory, filepattern='*.tif'):
 
     path_list = fromdir.split(os.sep)   
     print (path_list)
-    outfile = path_list[4]+'_'+path_list[5][0:-5]+'_max.tif'
+    #outfile = path_list[4]+'_'+path_list[5][0:-5]+'_max.tif'
+    outfile = path_list[-2]+'_'+path_list[-1][0:-5]+'_max.tif'
     print ('creating peak of peaks', outfile)
     driver = gdal.GetDriverByName('GTiff')
-    result = driver.CreateCopy(outfile, gdal.Open(directory[0]))
+    result = driver.CreateCopy(outfile, gdal.Open(filenames[0]))
     result.GetRasterBand(1).WriteArray(maximum)
     result = None
 
@@ -61,10 +63,10 @@ try:
 except:
     pass
 
-dest_dir_d = data_directory+'D_mean/'
-dest_dir_vd = data_directory+'VD_mean/'
-dest_dir_v = data_directory+'V_mean/'
-dest_dir_wl = data_directory+'WL_mean/'
+dest_dir_d = data_directory+'D_mean'
+dest_dir_vd = data_directory+'VD_mean'
+dest_dir_v = data_directory+'V_mean'
+dest_dir_wl = data_directory+'WL_mean'
 
 print (dest_dir_d)
 print (dest_dir_vd)

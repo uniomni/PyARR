@@ -25,14 +25,14 @@ from anuga.utilities import plot_utils
    
 #### ENTER DIRECTORY LOCATION HERE ###
 #location = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
-location = '/Work/Petar-2021/PyARR-data/' # this is critical for the scripts to run, you must put all your files in a folder called files
+location = '/Work/Petar-2021/PyARR-data/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
 ######################################
 
-def sww2maxTIF(directory, filepattern='*.sww'):
-    pattern = os.path.join(directory, filepattern)
-    files = glob.glob(pattern) 
+def sww2maxTIF(fromdir, filepattern='*.sww'):
+    pattern = os.path.join(fromdir, filepattern)
+    filenames = glob.glob(pattern) 
     	
-    for filename in files:
+    for filename in filenames:
         head, file = os.path.split(filename)
         #print ('fromdir',fromdir)
         print ('Converting: ', file)
