@@ -38,7 +38,6 @@ def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
 
     path_list = fromdir.split(os.sep)   
     print (path_list)
-    #outfile = path_list[4]+'_'+path_list[5][0:-5]+'_max.tif'
     outfile = path_list[-2]+'_'+path_list[-1][0:-5]+'_max.tif'
     print ('creating peak of peaks', outfile)
     driver = gdal.GetDriverByName('GTiff')
