@@ -3,4 +3,5 @@
 2 Create new directory for post processing data 
 3 Gracefully deal with clobbering of directories - (if already done, skip)
 4 Do the one up from the mean for one cell indexed by Easting, Northing
+5 Critical DUR to use one-up code
 
