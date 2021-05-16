@@ -193,8 +193,7 @@ def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
    	    verbose=False, 
    	    k_nearest_neighbours=3)
     
-    src_dir = fromdir
-    os.chdir(src_dir)
+    os.chdir(fromdir)
         
     try:  
         os.mkdir('D')   
@@ -210,16 +209,16 @@ def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
     dest_dir_wl = fromdir+'/WL/'
 
     
-    for fname in glob.glob(os.path.join(src_dir, "*depth_max.tif")):
+    for fname in glob.glob(os.path.join(fromdir, "*depth_max.tif")):
         shutil.copy(fname, dest_dir_d) 
   
-    for fname in glob.glob(os.path.join(src_dir, "*depthIntegratedVelocity_max.tif")):
+    for fname in glob.glob(os.path.join(fromdir, "*depthIntegratedVelocity_max.tif")):
         shutil.copy(fname, dest_dir_vd) 
     
-    for fname in glob.glob(os.path.join(src_dir, "*velocity_max.tif")):
+    for fname in glob.glob(os.path.join(fromdir, "*velocity_max.tif")):
         shutil.copy(fname, dest_dir_v)        
     
-    for fname in glob.glob(os.path.join(src_dir, "*stage_max.tif")):
+    for fname in glob.glob(os.path.join(fromdir, "*stage_max.tif")):
         shutil.copy(fname, dest_dir_wl)
     
     # deletes tif's from fromdir after they have been copied to their respective directories
