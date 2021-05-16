@@ -6,6 +6,9 @@ from os.path import expanduser
 storms = [1] # 1=1%AEP, 2=2%AEP etc
 durations = [10,15,20,25,30,45,60,90,120,180] #,270,360,540,720] #,1080,1440,1800,2160,2880,4320] # do not touch these as they are the standard ARR2019 durations
 quantities = ['WL','D','V','VD'] # but we probably are only interested in WL only which dur/pat is critical for max water level
+blockages = ['unblocked']#,'WCC2016'] # these are Wollongong City Councils standard blockages
+
+
 
 #### ENTER DIRECTORY LOCATION HERE ###
 #root_directory = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
