@@ -221,7 +221,18 @@ def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
     
     for fname in glob.glob(os.path.join(src_dir, "*stage_max.tif")):
         shutil.copy(fname, dest_dir_wl)
-        
+    
+    # deletes tif's from fromdir after they have been copied to their respective directories
+    files_in_directory = os.listdir(fromdir)
+
+    filtered_files = [file for file in files_in_directory if file.endswith(".tif")]
+
+    for file in filtered_files:
+	    path_to_file = os.path.join(fromdir, file)
+	    os.remove(path_to_file)	
+
+	
+	
 def write_ARR_results(outname, points_dict):
     
     f = open(outname, 'w')
