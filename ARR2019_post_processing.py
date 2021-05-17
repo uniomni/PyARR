@@ -132,10 +132,10 @@ def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
             
         mean, (one_up_filename, value) = find_average_element(filename_list)
             
-        print('Found filename: ', one_up_filename)
-        print('Value: ', value)
-        print('Mean: ', mean)
-        print('Location: ', point)
+        #print('Found filename: ', one_up_filename)
+        #print('Value: ', value)
+        #print('Mean: ', mean)
+        #print('Location: ', point)
     
         points_dict[point] = (one_up_filename, value, mean)     
     
@@ -169,6 +169,7 @@ def post_process(durations, locations, storm, quantity, data_directory):
             if value > max_value:
                 max_value = value
                 points_dict[location] = (one_up_filename, max_value, mean)
+		print(location, one_up_filename, max_value)
                 
     return points_dict
 
