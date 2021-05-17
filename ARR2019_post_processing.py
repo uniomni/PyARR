@@ -169,7 +169,7 @@ def post_process(durations, locations, storm, quantity, data_directory):
             if value > max_value:
                 max_value = value
                 points_dict[location] = (one_up_filename, max_value, mean)
-		print(location, one_up_filename, max_value)
+                print(location, one_up_filename, max_value, mean)
                 
     return points_dict
 
