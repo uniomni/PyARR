@@ -141,7 +141,7 @@ def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
     
     return points_dict
 
-def post_process(durations, locations, storm, quantity, data_directory):          
+def post_process(durations, locations, storm, quantity, data_directory, blockage):          
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
@@ -149,7 +149,7 @@ def post_process(durations, locations, storm, quantity, data_directory):
     
     duration_dict = {}
     for duration in durations:                
-        event = str(storm)+'%AEP'+str(duration)+'m_unblocked'
+        event = str(storm)+'%AEP'+str(duration)+'m_' + blockage
             
         fromdir = data_directory+event+'/'+quantity
         points_dict = crit_DUR_PAT(fromdir, locations)
