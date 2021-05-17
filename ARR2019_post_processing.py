@@ -98,7 +98,7 @@ def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
     filenames = glob.glob(pattern) 
 
     points_dict = {}  # Dictionary to hold return values (one_up_filename, value, mean) for each point
-    print('locations', locations)
+    #print('locations', locations)
     for point in locations:
         #print()
         # For each point in the grid compile list of filenames and associated maxima
