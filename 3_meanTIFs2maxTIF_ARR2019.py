@@ -16,7 +16,7 @@ import os.path
 from os.path import *
 
 #### ENTER DIRECTORY LOCATION HERE ###
-data_directory = expanduser('~') + '/models/1%AEP/' # location of your sww's
+data_directory = expanduser('~') + '/models/1%AEP/' # location of your files
 ######################################
 
 def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
