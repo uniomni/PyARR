@@ -61,45 +61,33 @@ for storm in storms:
 			#print (fromdir)
 			check_polys = maxTIF2meanTIF(fromdir)
    
-# delete all crap xml files
+# delete all xml files
 for filename in listdir(data_directory):
     if filename.endswith('.xml'):
         os.remove(data_directory + filename)
 
 
 # move created files into respective directories
-src_dir = data_directory
-os.chdir(src_dir)
+os.chdir(data_directory)
   
-try:	  
-    os.mkdir('D_mean')   
-    os.mkdir('VD_mean')
-    os.mkdir('V_mean')
-    os.mkdir('WL_mean')
-except:
-    pass
 
-dest_dir_d = data_directory + 'D_mean/'
-dest_dir_vd = data_directory + 'VD_mean/'
-dest_dir_v = data_directory + 'V_mean/'
-dest_dir_wl = data_directory + 'WL_mean/'
-
-print (dest_dir_d)
-print (dest_dir_vd)
-print (dest_dir_v)
-print (dest_dir_wl)
-
-for fname in glob.glob(os.path.join(src_dir,"*_D_mean.tif")):
-    shutil.move(fname,dest_dir_d) 
+os.mkdir('D_mean')   
+os.mkdir('VD_mean')
+os.mkdir('V_mean')
+os.mkdir('WL_mean')
 
 
-for fname in glob.glob(os.path.join(src_dir,"*_VD_mean.tif")):
-    shutil.move(fname,dest_dir_vd)
+for filename in glob.glob(os.path.join(data_directory,"*_D_mean.tif")):
+    shutil.move(fname,data_directory + 'D_mean/') 
 
 
-for fname in glob.glob(os.path.join(src_dir,"*_V_mean.tif")):
-    shutil.move(fname,dest_dir_v)        
+for fname in glob.glob(os.path.join(data_directory,"*_VD_mean.tif")):
+    shutil.move(filename,data_directory + 'VD_mean/')
 
 
-for fname in glob.glob(os.path.join(src_dir,"*_WL_mean.tif")):
-    shutil.move(fname,dest_dir_wl)
+for filename in glob.glob(os.path.join(data_directory,"*_V_mean.tif")):
+    shutil.move(filename,data_directory + 'V_mean/')        
+
+
+for filename in glob.glob(os.path.join(data_directory,"*_WL_mean.tif")):
+    shutil.move(filename,data_directory + 'WL_mean/')
