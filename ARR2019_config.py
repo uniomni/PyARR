@@ -26,6 +26,6 @@ locations = [(306679.877,6187525.723),
              (306954.652,6187838.069)] 
 
 # Resolution of grids                          
-CellSize = 20.0 
+CellSize = 1.0 
         
 
