@@ -4,7 +4,7 @@ After running the 1_sww2maxTIFs.py script, you need to run this script
 This script will open a directory of maximum TIF files and calculate
 the mean for that duration as per ARR2019 requirements
 
-hacked by Petar Milevski 28 April 2021
+by Petar Milevski - 2021
 
 """
 
