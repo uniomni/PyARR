@@ -19,7 +19,7 @@ import os.path
 from os.path import *
 
 #### ENTER DIRECTORY LOCATION HERE ###
-data_directory = expanduser("~") + '/models/1%AEP/' # location of you files
+data_directory = expanduser('~') + '/models/1%AEP/' # location of you files
 ######################################
 
 def maxTIF2meanTIF(directory, filepattern='*.tif'):
@@ -77,17 +77,17 @@ os.mkdir('V_mean')
 os.mkdir('WL_mean')
 
 
-for filename in glob.glob(os.path.join(data_directory,"*_D_mean.tif")):
+for filename in glob.glob(os.path.join(data_directory,'*_D_mean.tif')):
     shutil.move(fname,data_directory + 'D_mean/') 
 
 
-for fname in glob.glob(os.path.join(data_directory,"*_VD_mean.tif")):
+for fname in glob.glob(os.path.join(data_directory,'*_VD_mean.tif')):
     shutil.move(filename,data_directory + 'VD_mean/')
 
 
-for filename in glob.glob(os.path.join(data_directory,"*_V_mean.tif")):
+for filename in glob.glob(os.path.join(data_directory,'*_V_mean.tif')):
     shutil.move(filename,data_directory + 'V_mean/')        
 
 
-for filename in glob.glob(os.path.join(data_directory,"*_WL_mean.tif")):
+for filename in glob.glob(os.path.join(data_directory,'*_WL_mean.tif')):
     shutil.move(filename,data_directory + 'WL_mean/')
