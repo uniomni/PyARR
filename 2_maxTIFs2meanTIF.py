@@ -56,13 +56,10 @@ blockage = 'unblocked'
 for storm in storms:
 	for duration in durations:
 		for quantity in quantities:
-			event = str(storm)+'%AEP'+str(duration)+'m_'+blockage
-			try:
-				fromdir = data_directory+event+'/'+quantity
-				#print (fromdir)
-				check_polys = maxTIF2meanTIF(fromdir)
-			except:
-				pass
+			event = str(storm) + '%AEP' + str(duration) + 'm_' + blockage
+			fromdir = data_directory + event + '/' + quantity
+			#print (fromdir)
+			check_polys = maxTIF2meanTIF(fromdir)
    
 # delete all crap xml files
 for filename in listdir(data_directory):
@@ -82,10 +79,10 @@ try:
 except:
     pass
 
-dest_dir_d = data_directory+'D_mean/'
-dest_dir_vd = data_directory+'VD_mean/'
-dest_dir_v = data_directory+'V_mean/'
-dest_dir_wl = data_directory+'WL_mean/'
+dest_dir_d = data_directory + 'D_mean/'
+dest_dir_vd = data_directory + 'VD_mean/'
+dest_dir_v = data_directory + 'V_mean/'
+dest_dir_wl = data_directory + 'WL_mean/'
 
 print (dest_dir_d)
 print (dest_dir_vd)
