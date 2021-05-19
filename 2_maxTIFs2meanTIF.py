@@ -39,7 +39,7 @@ def maxTIF2meanTIF(directory, filepattern='*.tif'):
 
     path_list = fromdir.split(os.sep) 
     outfile = path_list[5]+'_'+path_list[6]+'_mean.tif'    
-    print ('Creating mean tif from maximums of each dur/pat', outfile)
+    print ('Creating mean: ', outfile)
     driver = gdal.GetDriverByName('GTiff')
     result = driver.CreateCopy(data_directory+outfile, gdal.Open(directory[0]))
     result.GetRasterBand(1).WriteArray(mean)
