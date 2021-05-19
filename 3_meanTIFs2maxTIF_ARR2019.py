@@ -47,3 +47,8 @@ create_Dmax = meanTIF2maxTIF(data_directory + 'D_mean')
 create_VDmax = meanTIF2maxTIF(data_directory + 'VD_mean')
 create_Vmax = meanTIF2maxTIF(data_directory + 'V_mean')
 create_WLmax = meanTIF2maxTIF(data_directory + 'WL_mean')
+
+# delete all xml files
+for filename in listdir(data_directory):
+    if filename.endswith('.xml'):
+        os.remove(data_directory + filename)
