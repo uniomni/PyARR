@@ -78,7 +78,7 @@ os.mkdir('WL_mean')
 
 
 for filename in glob.glob(os.path.join(data_directory,'*_D_mean.tif')):
-    shutil.move(fname,data_directory + 'D_mean/') 
+    shutil.move(filename,data_directory + 'D_mean/') 
 
 
 for fname in glob.glob(os.path.join(data_directory,'*_VD_mean.tif')):
