@@ -81,7 +81,7 @@ for filename in glob.glob(os.path.join(data_directory,'*_D_mean.tif')):
     shutil.move(filename,data_directory + 'D_mean/') 
 
 
-for fname in glob.glob(os.path.join(data_directory,'*_VD_mean.tif')):
+for filename in glob.glob(os.path.join(data_directory,'*_VD_mean.tif')):
     shutil.move(filename,data_directory + 'VD_mean/')
 
 
