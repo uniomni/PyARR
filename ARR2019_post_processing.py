@@ -246,8 +246,8 @@ def write_ARR_results(outname, points_dict):
     for point in points_dict:
         one_up_filename, value, mean = points_dict[point]
         
-        f.write('%f, %f, %s, %f, %f\n' % (point[0], point[1], 
-                                              os.path.split(one_up_filename)[1], value, mean))
+        f.write('%f,%f,%f,%s,%f\n' % (point[0], point[1], value,
+                                              os.path.split(one_up_filename)[1], mean))
     f.close()
 
         
