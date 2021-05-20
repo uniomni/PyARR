@@ -5,7 +5,7 @@ from os.path import expanduser
         
 storms = [1] # 1=1%AEP, 2=2%AEP etc
 durations = [10,15,20,25,30,45,60,90,120,180,270,360,540,720] #,1080,1440,1800,2160,2880,4320] # do not touch these as they are the standard ARR2019 durations
-quantities = ['WL','D']#,'V','VD'] # but we probably are only interested in WL only which dur/pat is critical for max water level
+quantities = ['WL'] #,'D']#,'V','VD'] # but we probably are only interested in WL only which dur/pat is critical for max water level
 blockage = 'unblocked' #,'WCC2016' # these are Wollongong City Councils standard blockages
 
 #### ENTER DIRECTORY LOCATION HERE ###
@@ -15,8 +15,8 @@ data_directory = expanduser('~') + root_directory
 
 
 # List of Easting, Northing coordinates
-locations = [(306679.877,6187525.723)]#, 
-            # (305829.954,6188350.062), 
+locations = [(306679.877,6187525.723), 
+             (305829.954,6188350.062)] 
             # (305497.573,6187034.980), 
             # (304762.441,6186692.149), 
             # (304979.435,6186066.239), 
