@@ -19,9 +19,6 @@ import os.path
 from os.path import *
 from ARR2019_config import storms, durations, quantities, data_directory, CellSize, blockage
 
-#### ENTER DIRECTORY LOCATION HERE ###
-data_directory = expanduser('~') + '/models/1%AEP/' # location of you files
-######################################
 
 def maxTIF2meanTIF(directory, filepattern='*.tif'):
     pattern = os.path.join(directory, filepattern)
