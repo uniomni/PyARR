@@ -162,16 +162,17 @@ def post_process(durations, locations, storm, quantity, data_directory, blockage
                         
         # Calculate and store max values across all durations
         max_value = 0
+        max_points_dict = {}
         for duration in durations:
             points_dict = duration_dict[duration]
             one_up_filename, value, mean = points_dict[location]
             #print('Duration', duration, one_up_filename, value, mean)
             if value > max_value:
                 max_value = value
-                points_dict[location] = (one_up_filename, max_value, mean)
-                print(location, one_up_filename, max_value, mean)
-                
-    return points_dict
+            print(location, one_up_filename, value, mean)
+        max_points_dict[location] = (one_up_filename, max_value, mean)
+        print('Max found to be', location, one_up_filename, max_value, mean)                
+    return max_points_dict
 
     
 def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
