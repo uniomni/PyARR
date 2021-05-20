@@ -14,10 +14,9 @@ import os
 import glob
 import os.path
 from os.path import *
+from ARR2019_config import storms, durations, quantities, data_directory, CellSize, blockage
 
-#### ENTER DIRECTORY LOCATION HERE ###
-data_directory = expanduser('~') + '/models/1%AEP/' # location of your files
-######################################
+
 
 def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
     pattern = os.path.join(fromdir, filepattern)
@@ -29,9 +28,6 @@ def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
         res.append(ds.GetRasterBand(1).ReadAsArray()) # We assume that all rasters has a single band
     stacked = np.dstack(res) # We assume that all rasters have the same dimensions
     maximum = np.max(stacked, axis=-1)
-    
-    # Finally save a new raster with the result. 
-    # This assumes that all inputs have the same geotransform since we just copy the first
 
     path_list = fromdir.split(os.sep)   
     print (fromdir)
