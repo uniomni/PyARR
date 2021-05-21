@@ -100,7 +100,6 @@ def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
     points_dict = {}  # Dictionary to hold return values (one_up_filename, value, mean) for each point
     #print('locations', locations)
     for point in locations:
-        #print()
         # For each point in the grid compile list of filenames and associated maxima
         filename_list = []
         for filename in filenames:
@@ -141,6 +140,25 @@ def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
     
     return points_dict
 
+def find_max_values_across_all_durations(locations, durations, duration_dict):  
+    max_points_dict = {}
+    for location in locations:
+                        
+        # Calculate and store max values across all durations
+        max_value = 0
+        for duration in durations:
+            points_dict = duration_dict[duration]
+            one_up_filename, value, mean = points_dict[location]
+            print(location, one_up_filename, value, mean)            
+            if value > max_value:
+                max_value = value
+                max_points_dict[location] = (one_up_filename, max_value, mean)
+
+        one_up_filename, value, mean = max_points_dict[location]
+        print('Max found to be', location, one_up_filename, max_value, mean)                
+    return max_points_dict
+
+    
 def post_process(durations, locations, storm, quantity, data_directory, blockage):          
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
@@ -157,26 +175,13 @@ def post_process(durations, locations, storm, quantity, data_directory, blockage
         # Store result for this duration
         duration_dict[duration] = points_dict
             
-
-    max_points_dict = {}
-    for location in locations:
-                        
-        # Calculate and store max values across all durations
-        max_value = 0
-        for duration in durations:
-            points_dict = duration_dict[duration]
-            one_up_filename, value, mean = points_dict[location]
-            #print('Duration', duration, one_up_filename, value, mean)
-            print(location, one_up_filename, value, mean)            
-            if value > max_value:
-                max_value = value
-                max_points_dict[location] = (one_up_filename, max_value, mean)
-                #print('Saved', location, one_up_filename, value, mean)
-                #print()
-
-        one_up_filename, value, mean = max_points_dict[location]
-        print('Max found to be', location, one_up_filename, max_value, mean)                
-    return max_points_dict
+#    print()
+#    print(locations)
+#    print(durations)
+#    print(duration_dict)
+    
+    max_points_dict = find_max_values_across_all_durations(locations, durations, duration_dict)   
+    return max_points_dict    
 
     
 def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
@@ -246,8 +251,8 @@ def write_ARR_results(outname, points_dict):
     for point in points_dict:
         one_up_filename, value, mean = points_dict[point]
         
-        f.write('%f, %f, %s, %f, %f\n' % (point[0], point[1], 
-                                              os.path.split(one_up_filename)[1], value, mean))
+        f.write('%.3f, %.3f, %s, %.12f, %.12f\n' % (point[0], point[1], 
+                                          os.path.split(one_up_filename)[1], value, mean))
     f.close()
 
         
