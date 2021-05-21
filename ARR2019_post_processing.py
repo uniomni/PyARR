@@ -96,7 +96,7 @@ def find_average_element(filename_list):
 
 
         
-def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
+def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
     """Calculate filename with value closest to the mean from above 
        at specified locations.
     
@@ -195,7 +195,7 @@ def post_process(durations, locations, storm, quantity, data_directory, blockage
         event = str(storm)+'%AEP'+str(duration)+'m_' + blockage
             
         fromdir = data_directory+event+'/'+quantity
-        points_dict = crit_DUR_PAT(fromdir, locations)
+        points_dict = critical_duration_pattern(fromdir, locations)
         
         # Store result for this duration
         duration_dict[duration] = points_dict
