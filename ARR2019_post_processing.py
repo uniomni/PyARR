@@ -246,13 +246,13 @@ def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
 def write_ARR_results(outname, points_dict):
     
     f = open(outname, 'w')
-    f.write('Easting,Northing,Max_Value,critical_DUR/PAT,Mean\n')
+    f.write('Easting, Northing, Max_Value, critical_DUR/PAT, Mean\n')
         
     for point in points_dict:
         one_up_filename, value, mean = points_dict[point]
         
-        f.write('%.3f, %.3f, %s, %.12f, %.12f\n' % (point[0], point[1], 
-                                          os.path.split(one_up_filename)[1], value, mean))
+        f.write('%.3f, %.3f, %.12f, %s, %.12ff\n' % (point[0], point[1], value, 
+                                                        os.path.split(one_up_filename)[1], mean))
     f.close()
 
         
