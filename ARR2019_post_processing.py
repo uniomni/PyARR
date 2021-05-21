@@ -184,7 +184,7 @@ def find_max_values_across_all_durations(locations, durations, duration_dict):
     return max_points_dict
 
     
-def post_process(durations, locations, storm, quantity, data_directory, blockage):          
+def post_process(durations, locations, storm, quantity, proc_directory, blockage):          
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
@@ -194,7 +194,7 @@ def post_process(durations, locations, storm, quantity, data_directory, blockage
     for duration in durations:                
         event = str(storm)+'%AEP'+str(duration)+'m_' + blockage
             
-        fromdir = data_directory+event+'/'+quantity
+        fromdir = proc_directory+event+'/'+quantity
         points_dict = critical_duration_pattern(fromdir, locations)
         
         # Store result for this duration
@@ -204,18 +204,26 @@ def post_process(durations, locations, storm, quantity, data_directory, blockage
     return max_points_dict    
 
     
-def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
+def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
+    """Generate geotiff files from ANUGA sww files for four quantities. 
+    The maximum values will be stored in the destination files.
+    """
+    
+    # Ensure destination directory exists
+    os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
+    print('Confirmed destdir', destdir)
+    
+    # Get sww files from data directory
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
     	
     for filename in filenames:
         head, file = os.path.split(filename)
-        #print ('fromdir',fromdir)
-        print ('Converting: ', file)
+        print ('Converting: ', file, fromdir, destdir)
         plot_utils.Make_Geotif(
             swwFile=filename, 
             output_quantities=['depth', 'velocity', 'depthIntegratedVelocity', 'stage'],
-            output_dir=fromdir,
+            output_dir=destdir,
    	    myTimeStep='max',
    	    CellSize=CellSize, 
    	    velocity_extrapolation=True, 
@@ -224,40 +232,37 @@ def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
    	    verbose=False, 
    	    k_nearest_neighbours=3)
     
-    os.chdir(fromdir)
-    try:  
-        os.mkdir('D')   
-        os.mkdir('VD')
-        os.mkdir('V')
-        os.mkdir('WL')
-    except:
-        pass
+    os.chdir(destdir)
+    os.makedirs('D', exist_ok=True)
+    os.makedirs('VD', exist_ok=True)    
+    os.makedirs('V', exist_ok=True)    
+    os.makedirs('WL', exist_ok=True)    
 		
-    dest_dir_d = fromdir+'/D/'
-    dest_dir_vd = fromdir+'/VD/'
-    dest_dir_v = fromdir+'/V/'
-    dest_dir_wl = fromdir+'/WL/'
+    dest_dir_d = destdir+'/D/'
+    dest_dir_vd = destdir+'/VD/'
+    dest_dir_v = destdir+'/V/'
+    dest_dir_wl = destdir+'/WL/'
 
     
-    for fname in glob.glob(os.path.join(fromdir, "*depth_max.tif")):
+    for fname in glob.glob(os.path.join(destdir, "*depth_max.tif")):
         shutil.copy(fname, dest_dir_d) 
   
-    for fname in glob.glob(os.path.join(fromdir, "*depthIntegratedVelocity_max.tif")):
+    for fname in glob.glob(os.path.join(destdir, "*depthIntegratedVelocity_max.tif")):
         shutil.copy(fname, dest_dir_vd) 
     
-    for fname in glob.glob(os.path.join(fromdir, "*velocity_max.tif")):
+    for fname in glob.glob(os.path.join(destdir, "*velocity_max.tif")):
         shutil.copy(fname, dest_dir_v)        
     
-    for fname in glob.glob(os.path.join(fromdir, "*stage_max.tif")):
+    for fname in glob.glob(os.path.join(destdir, "*stage_max.tif")):
         shutil.copy(fname, dest_dir_wl)
     
-    # Delete TIF's from fromdir after they have been copied to their respective directories
-    files_in_directory = os.listdir(fromdir)
+    # Delete TIF's from destdir after they have been copied to their respective directories
+    files_in_directory = os.listdir(destdir)
 
     filtered_files = [file for file in files_in_directory if file.endswith('.tif')]
 
     for file in filtered_files:
-        path_to_file = os.path.join(fromdir, file)
+        path_to_file = os.path.join(destdir, file)
         os.remove(path_to_file)	
 
 	

@@ -4,15 +4,17 @@
 from os.path import expanduser
         
 storms = [1] # 1=1%AEP, 2=2%AEP etc
-durations = [10,15,20,25,30,45,60,90,120,180,270,360,540,720] #,1080,1440,1800,2160,2880,4320] # do not touch these as they are the standard ARR2019 durations
+durations = [10,15] #,2025,30,45,60,90,120,180,270,360,540,720] #,1080,1440,1800,2160,2880,4320] # do not touch these as they are the standard ARR2019 durations
 quantities = ['WL'] #,'D']#,'V','VD'] # but we probably are only interested in WL only which dur/pat is critical for max water level
 blockage = 'unblocked' #,'WCC2016' # these are Wollongong City Councils standard blockages
 
 #### ENTER DIRECTORY LOCATION HERE ###
 #root_directory = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
-root_directory = '/Work/Petar-2021/PyARR-data/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
-data_directory = expanduser('~') + root_directory
-
+root_directory = '/Work/Petar-2021/'
+data_directory = expanduser('~') + root_directory + 'PyARR-data/1%AEP/' 
+print('data_directory', data_directory)
+proc_directory = expanduser('~') + root_directory + 'PyARR-postprocessed-data/1%AEP/' 
+print('proc_directory', proc_directory)
 
 # List of Easting, Northing coordinates
 locations = [(306679.877,6187525.723), 
