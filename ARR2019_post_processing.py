@@ -195,6 +195,7 @@ def post_process(durations, locations, storm, quantity, proc_directory, blockage
         event = str(storm)+'%AEP'+str(duration)+'m_' + blockage
             
         fromdir = proc_directory+event+'/'+quantity
+        print ('fromdir loc', fromdir, locations)
         points_dict = critical_duration_pattern(fromdir, locations)
         
         # Store result for this duration
