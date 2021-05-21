@@ -33,7 +33,8 @@ def find_average_element(filename_list):
     """ Find element closest to the mean from above
     
     Input: List of 2-tuples where each tuple has the form: (string, float)
-    Output: The mean value and the 2-tuple where the float is closest to the mean from above, i.e mean, (string, float) 
+    Output: The mean value and the 2-tuple where the float is closest to 
+            the mean from above, i.e mean, (string, float) 
      
     Algorithm:
     1. calculate the mean of the 10 numbers.
@@ -56,7 +57,9 @@ def find_average_element(filename_list):
          ('1%AEP10m_P9_unblocked_depth_max', 1.0749958),
          ('1%AEP10m_P3_unblocked_depth_max', 1.0737971)]
 	 
-     The output for filename_list should be 1.0747306, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
+     The output for filename_list should be 
+     mean, (filename, value) e.g.
+     1.07459002, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
 	 
 
     """
@@ -65,7 +68,11 @@ def find_average_element(filename_list):
         raise BaseException('Got an empty list: %s' % filename_list)
     
     # Sort by value (Schwartzian Transform)
-    Y = [(d[1], d[0]) for d in filename_list]  # Swap order, making depth the first column
+    # Swap order, making 
+    # value the first column, filename the second
+    Y = [(d[1], d[0]) for d in filename_list]  
+    
+    # Then sort based on value
     Y.sort()
 
     # Calculate average
@@ -73,6 +80,7 @@ def find_average_element(filename_list):
     for y in Y:
         sum += y[0]
     mean = sum/len(Y)
+    
     # Now find element immediately greater than average
     i = 0
     y = Y[0][0] 
@@ -89,7 +97,8 @@ def find_average_element(filename_list):
 
         
 def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
-    """Calculate filename with value closest to the mean from above at specified locations.
+    """Calculate filename with value closest to the mean from above 
+       at specified locations.
     
     Return dictionary 
             points_dict[point] = (one_up_filename, value, mean)     
@@ -135,6 +144,7 @@ def crit_DUR_PAT(fromdir, locations, filepattern='*.tif'):
     
     return points_dict
 
+    
 def find_max_values_across_all_durations(locations, durations, duration_dict):  
     """Find the highest quantity value for all storm durations at specified locations.
     
@@ -157,10 +167,8 @@ def find_max_values_across_all_durations(locations, durations, duration_dict):
 
     """
     
-    
     max_points_dict = {}
     for location in locations:
-                        
         # Calculate and store max values across all durations
         max_value = 0
         for duration in durations:
@@ -172,7 +180,7 @@ def find_max_values_across_all_durations(locations, durations, duration_dict):
                 max_points_dict[location] = (one_up_filename, max_value, mean)
 
         one_up_filename, value, mean = max_points_dict[location]
-        print('Max found to be', location, one_up_filename, max_value, mean)                
+        #print('Max found to be', location, one_up_filename, max_value, mean)                
     return max_points_dict
 
     
@@ -217,7 +225,6 @@ def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
    	    k_nearest_neighbours=3)
     
     os.chdir(fromdir)
-        
     try:  
         os.mkdir('D')   
         os.mkdir('VD')
@@ -244,10 +251,10 @@ def sww2maxTIF(fromdir, CellSize=1.0, filepattern='*.sww'):
     for fname in glob.glob(os.path.join(fromdir, "*stage_max.tif")):
         shutil.copy(fname, dest_dir_wl)
     
-    # deletes tif's from fromdir after they have been copied to their respective directories
+    # Delete TIF's from fromdir after they have been copied to their respective directories
     files_in_directory = os.listdir(fromdir)
 
-    filtered_files = [file for file in files_in_directory if file.endswith(".tif")]
+    filtered_files = [file for file in files_in_directory if file.endswith('.tif')]
 
     for file in filtered_files:
         path_to_file = os.path.join(fromdir, file)
