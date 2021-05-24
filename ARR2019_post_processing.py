@@ -210,62 +210,59 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     The maximum values will be stored in the destination files.
     """
     
+    # Relate ANUGA quanties to directories with abbreviated names
+    output_quantities = {'depth': 'D', 
+                         'velocity': 'V',
+                         'depthIntegratedVelocity': 'VD',
+                         'stage': 'WL'}
+    MyTimeStep = 'max' # Used in MakeGeotif and associated filename creation 
+    # FIXME (Ole): May move output_quantities and MyTimeStep to the general config section
+        
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
     print('Confirmed destdir', destdir)
     
+    # Create directories for each quantity
+    destdir_quantity = {}
+    for Q in output_quantities:
+        destdir_quantity[Q] = os.path.join(destdir, output_quantities[Q])
+        os.makedirs(destdir_quantity[Q], exist_ok=True)
+
     # Get sww files from data directory
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
-    	
+
     for filename in filenames:
         head, file = os.path.split(filename)
-        print ('Converting: ', file, fromdir, destdir)
-        plot_utils.Make_Geotif(
-            swwFile=filename, 
-            output_quantities=['depth', 'velocity', 'depthIntegratedVelocity', 'stage'],
-            output_dir=destdir,
-   	    myTimeStep='max',
-   	    CellSize=CellSize, 
-   	    velocity_extrapolation=True, 
-   	    min_allowed_height=0.01, 
-   	    EPSG_CODE=28356, # EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web 
-   	    verbose=False, 
-   	    k_nearest_neighbours=3)
-    
-    os.chdir(destdir)
-    os.makedirs('D', exist_ok=True)
-    os.makedirs('VD', exist_ok=True)    
-    os.makedirs('V', exist_ok=True)    
-    os.makedirs('WL', exist_ok=True)    
-		
-    dest_dir_d = destdir+'/D/'
-    dest_dir_vd = destdir+'/VD/'
-    dest_dir_v = destdir+'/V/'
-    dest_dir_wl = destdir+'/WL/'
-
-    
-    for fname in glob.glob(os.path.join(destdir, "*depth_max.tif")):
-        shutil.copy(fname, dest_dir_d) 
-  
-    for fname in glob.glob(os.path.join(destdir, "*depthIntegratedVelocity_max.tif")):
-        shutil.copy(fname, dest_dir_vd) 
-    
-    for fname in glob.glob(os.path.join(destdir, "*velocity_max.tif")):
-        shutil.copy(fname, dest_dir_v)        
-    
-    for fname in glob.glob(os.path.join(destdir, "*stage_max.tif")):
-        shutil.copy(fname, dest_dir_wl)
-    
-    # Delete TIF's from destdir after they have been copied to their respective directories
-    files_in_directory = os.listdir(destdir)
-
-    filtered_files = [file for file in files_in_directory if file.endswith('.tif')]
-
-    for file in filtered_files:
-        path_to_file = os.path.join(destdir, file)
-        os.remove(path_to_file)	
-
+        print()
+        print('Converting %s to %s' % (filename, destdir))
+        
+        storm_pattern, _ = os.path.splitext(file)
+        
+        for Q in output_quantities:
+            
+            output_filename = os.path.join(destdir, 
+                                           destdir_quantity[Q], 
+                                           storm_pattern + '_' + Q + '_' + MyTimeStep + '.tif')
+                                           
+            if os.path.isfile(output_filename):
+                print('Already computed', output_filename)
+            else: 
+                print('Computing', output_filename)
+           
+            
+                plot_utils.Make_Geotif(
+                    swwFile=filename, 
+                    output_quantities=[Q],
+                    output_dir=destdir_quantity[Q],
+   	            myTimeStep=MyTimeStep,
+   	            CellSize=CellSize, 
+   	            velocity_extrapolation=True, 
+   	            min_allowed_height=0.01, 
+   	            EPSG_CODE=28356, # EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web 
+   	            verbose=False, 
+   	            k_nearest_neighbours=3)
+            
 	
 def write_ARR_results(outname, points_dict):
     
