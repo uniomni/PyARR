@@ -272,7 +272,7 @@ def write_ARR_results(outname, points_dict):
     for point in points_dict:
         one_up_filename, value, mean = points_dict[point]
         
-        f.write('%.3f, %.3f, %.12f, %s, %.12f\n' % (point[0], point[1], value, 
+        f.write('%.3f, %.3f, %.3, %s, %.3f\n' % (point[0], point[1], value, 
                                                     os.path.split(one_up_filename)[1], mean))
     f.close()
 
