@@ -76,21 +76,23 @@ for storm in storms:
 
 os.chdir(data_directory)
 
-for quantity in quantities:
-	new_dir =  proc_directory + quantity + '_mean'
-	os.mkdir(new_dir)
-	for filename in glob.glob(os.path.join(data_directory,'*_' + quantity + '_mean.tif')):
-		shutil.move(filename,proc_directory + quantity + '_mean' + '/')
+for storm in storms:
+    for quantity in quantities:
+    	new_dir =  proc_directory + str(storm) + '%AEP_' + quantity + '_mean'
+    	os.mkdir(new_dir)
+    	for filename in glob.glob(os.path.join(data_directory,'*_' + quantity + '_mean.tif')):
+    		shutil.move(filename,new_dir + '/')
 
 # create peak of peaks and move to new directory
 for storm in storms:
 	new_max_dir = proc_directory + str(storm) + '%AEP_max'
 	os.mkdir(new_max_dir)
 
-for quantity in quantities:
-	create_max = meanTIF2maxTIF(proc_directory + quantity + '_mean')
-	for filename in glob.glob(os.path.join(data_directory,'*_' + quantity + '_max.tif')):
-		shutil.move(filename,new_max_dir)
+for storm in storms:
+    for quantity in quantities:
+    	create_max = meanTIF2maxTIF(proc_directory + str(storm) + '%AEP_' +  quantity + '_mean')
+    	for filename in glob.glob(os.path.join(data_directory,'*_' + quantity + '_max.tif')):
+    		shutil.move(filename,new_max_dir)
 
 # clean up (delete all xml files)
 for filename in listdir(data_directory):
