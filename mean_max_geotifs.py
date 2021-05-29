@@ -33,10 +33,10 @@ def maxTIF2meanTIF(filenames, filepattern='*.tif'):
     mean = np.mean(stacked, axis=-1)
 
     path_list = fromdir.split(os.sep) 
-    outfile = event+'_'+quantity+'_mean.tif'    
+    outfile = event + '_' + quantity + '_mean.tif'    
     print ('Creating mean: ', outfile)
     driver = gdal.GetDriverByName('GTiff')
-    result = driver.CreateCopy(data_directory+outfile, gdal.Open(filenames[0]))
+    result = driver.CreateCopy(data_directory + outfile, gdal.Open(filenames[0]))
     result.GetRasterBand(1).WriteArray(mean)
     result = None    
 
@@ -56,7 +56,7 @@ def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
     storm_list = proc_directory.split(os.sep)
     #print (storm_list[-2]+'_'+quantity)
 
-    outfile = storm_list[-2] + '_'+quantity + '_max.tif'
+    outfile = storm_list[-2] + '_' + quantity + '_max.tif'
     print ('Creating peak of peaks: ', outfile)
     driver = gdal.GetDriverByName('GTiff')
     result = driver.CreateCopy(data_directory + '/' + outfile, gdal.Open(filenames[0]))
@@ -67,32 +67,32 @@ def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
 # do stuff
 
 for storm in storms:
-	for duration in durations:
-		for quantity in quantities:
-			event = str(storm) + '%AEP' + str(duration) + 'm_' + blockage
-			fromdir = proc_directory + event + '/' + quantity
-			#print (fromdir)
-			check_polys = maxTIF2meanTIF(fromdir)
+    for duration in durations:
+        for quantity in quantities:
+            event = str(storm) + '%AEP' + str(duration) + 'm_' + blockage
+            fromdir = proc_directory + event + '/' + quantity
+            #print (fromdir)
+            check_polys = maxTIF2meanTIF(fromdir)
 
 os.chdir(data_directory)
 
 for storm in storms:
     for quantity in quantities:
-    	new_dir =  proc_directory + str(storm) + '%AEP_' + quantity + '_mean'
-    	os.mkdir(new_dir)
-    	for filename in glob.glob(os.path.join(data_directory,'*_' + quantity + '_mean.tif')):
-    		shutil.move(filename,new_dir + '/')
+        new_dir =  proc_directory + str(storm) + '%AEP_' + quantity + '_mean'
+        os.mkdir(new_dir)
+        for filename in glob.glob(os.path.join(data_directory, '*_' + quantity + '_mean.tif')):
+            shutil.move(filename,new_dir + '/')
 
 # create peak of peaks and move to new directory
 for storm in storms:
-	new_max_dir = proc_directory + str(storm) + '%AEP_max'
-	os.mkdir(new_max_dir)
+    new_max_dir = proc_directory + str(storm) + '%AEP_max'
+    os.mkdir(new_max_dir)
 
 for storm in storms:
     for quantity in quantities:
-    	create_max = meanTIF2maxTIF(proc_directory + str(storm) + '%AEP_' +  quantity + '_mean')
-    	for filename in glob.glob(os.path.join(data_directory,'*_' + quantity + '_max.tif')):
-    		shutil.move(filename,new_max_dir)
+        create_max = meanTIF2maxTIF(proc_directory + str(storm) + '%AEP_' +  quantity + '_mean')
+        for filename in glob.glob(os.path.join(data_directory, '*_' + quantity + '_max.tif')):
+            shutil.move(filename,new_max_dir)
 
 # clean up (delete all xml files)
 for filename in listdir(data_directory):
