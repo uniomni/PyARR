@@ -191,15 +191,16 @@ def post_process(durations, locations, storm, quantity, proc_directory, blockage
     """
     
     duration_dict = {}
-    for duration in durations:                
-        event = str(storm)+'%AEP'+str(duration)+'m_' + blockage
+    for duration in durations: 
+        for blockage in blockages:
+		
+            event = str(storm)+'%AEP'+str(duration)+'m_' + blockage
+            fromdir = proc_directory+event+'/'+quantity
+            print ('fromdir loc', fromdir, locations)
+            points_dict = critical_duration_pattern(fromdir, locations)
             
-        fromdir = proc_directory+event+'/'+quantity
-        print ('fromdir loc', fromdir, locations)
-        points_dict = critical_duration_pattern(fromdir, locations)
-        
-        # Store result for this duration
-        duration_dict[duration] = points_dict
+            # Store result for this duration
+            duration_dict[duration] = points_dict
             
     max_points_dict = find_max_values_across_all_durations(locations, durations, duration_dict)   
     return max_points_dict    
@@ -275,6 +276,3 @@ def write_ARR_results(outname, points_dict):
         f.write('%.3f, %.3f, %.3, %s, %.3f\n' % (point[0], point[1], value, 
                                                     os.path.split(one_up_filename)[1], mean))
     f.close()
-
-        
-                        
