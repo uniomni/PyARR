@@ -69,10 +69,11 @@ def meanTIF2maxTIF(fromdir, filepattern='*.tif'):
 for storm in storms:
     for duration in durations:
         for quantity in quantities:
-            event = str(storm) + '%AEP' + str(duration) + 'm_' + blockage
-            fromdir = proc_directory + event + '/' + quantity
-            #print (fromdir)
-            check_polys = maxTIF2meanTIF(fromdir)
+            for blockage in blockages:
+                event = str(storm) + '%AEP' + str(duration) + 'm_' + blockage
+                fromdir = proc_directory + event + '/' + quantity
+                #print (fromdir)
+                check_polys = maxTIF2meanTIF(fromdir)
 
 os.chdir(data_directory)
 
