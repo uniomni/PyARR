@@ -1,8 +1,9 @@
 """Common parameters for ARR2019
 """
-        
+
+from easygui import *        
 from os.path import expanduser
-        
+ 
 storms = [1] # 1=1%AEP, 2=2%AEP etc
 durations = [10,15,20,25,30,45,60,90,120,180,270,360,540,720] #,1080,1440,1800,2160,2880,4320] # do not touch these as they are the standard ARR2019 durations
 quantities = ['WL'] #,'D']#,'V','VD'] # but we probably are only interested in WL only which dur/pat is critical for max water level
@@ -18,6 +19,16 @@ data_directory = expanduser('~') + root_directory + 'PyARR-data/1%AEP/'
 print('data_directory', data_directory)
 proc_directory = expanduser('~') + root_directory + 'PyARR-postprocessed-data/1%AEP/' 
 print('proc_directory', proc_directory)
+
+##############################################################################################
+###### below uses easygui to allow user to manually choose the location of the data directory
+###### instead of pointing to the path above
+
+#data_directory = diropenbox('Select data directory', default=expanduser('~'))
+#data_directory = data_directory + '/'
+#proc_directory = data_directory + '/PyARR-postprocessed-data/1%AEP/'
+##############################################################################################
+
 
 # List of Easting, Northing coordinates
 locations = [(306679.877,6187525.723), 
