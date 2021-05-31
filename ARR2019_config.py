@@ -9,7 +9,7 @@ quantities = ['WL'] #,'D']#,'V','VD'] # but we probably are only interested in W
 
 
 # OLE please fix blockage, can this be made into a list as well?????
-blockage = 'unblocked' #,'WCC2016' # these are Wollongong City Councils standard blockages
+blockage = ['unblocked'] #,'WCC2016' # these are Wollongong City Councils standard blockages
 
 #### ENTER DIRECTORY LOCATION HERE ###
 #root_directory = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
