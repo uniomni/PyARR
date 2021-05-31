@@ -184,7 +184,7 @@ def find_max_values_across_all_durations(locations, durations, duration_dict):
     return max_points_dict
 
     
-def post_process(durations, locations, storm, quantity, proc_directory, blockage):          
+def post_process(durations, locations, storm, quantity, proc_directory, blockages):          
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
