@@ -61,7 +61,7 @@ def find_average_element(filename_list):
      mean, (filename, value) e.g.
      1.07459002, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
 	 
-
+    
     """
     
     if len(filename_list) == 0:
@@ -209,6 +209,8 @@ def post_process(durations, locations, storm, quantity, proc_directory, blockage
 def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     """Generate geotiff files from ANUGA sww files for four quantities. 
     The maximum values will be stored in the destination files.
+    
+    Note this works perfectly, do not touch it
     """
     
     # Relate ANUGA quanties to directories with abbreviated names
