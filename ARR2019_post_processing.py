@@ -65,7 +65,7 @@ def find_average_element(filename_list):
     """
     
     if len(filename_list) == 0:
-        raise BaseException('Got an empty list: %s' % filename_list)
+        raise BaseException('Fix your ARR2019_config.py file list  Got an empty list: %s' % filename_list)
     
     # Sort by value (Schwartzian Transform)
     # Swap order, making 
