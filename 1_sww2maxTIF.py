@@ -2,6 +2,7 @@
 
 It will convert a collection of sww files to TIF with maximum values of selected quantities.
 
+Note - this has been tested and works perfectly, dont touch the code
 """
 
 
