@@ -7,6 +7,7 @@ create the peak of peaks from the means as per ARR2019 requirements
 
 by Petar Milevski - 2021
 
+Note - this has been tested and works perfectly, dont touch the code
 """
 
 import shutil
