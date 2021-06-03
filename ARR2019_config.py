@@ -31,8 +31,9 @@ print('proc_directory', proc_directory)
 
 
 # List of Easting, Northing coordinates
-locations = [(306679.877,6187525.723), 
-             (305829.954,6188350.062)] 
+locations = [(306679.877,6187525.723),
+             (304761.537,6186312.072)] # added new test location
+            # (305829.954,6188350.062)] 
             # (305497.573,6187034.980), 
             # (304762.441,6186692.149), 
             # (304979.435,6186066.239), 
@@ -41,5 +42,3 @@ locations = [(306679.877,6187525.723),
 
 # Resolution of grids                          
 CellSize = 1.0 
-        
-
