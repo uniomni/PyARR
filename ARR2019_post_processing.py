@@ -61,7 +61,7 @@ def find_average_element(filename_list):
      mean, (filename, value) e.g.
      1.07459002, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
 	 
-    
+    THIS WORKS!!!!!
     """
     
     if len(filename_list) == 0:
@@ -105,7 +105,10 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
             
     Where value is the value of this quantity at this location and 
     mean the average of this value across all storm patterns as calculate by find_average_element()
-            
+    
+    
+    
+    THIS WORKS!!!!!        
     """
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
@@ -141,11 +144,11 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
             
         mean, (one_up_filename, value) = find_average_element(filename_list)
         points_dict[point] = (one_up_filename, value, mean)     
-    
+        print (one_up_filename, value, mean)
     return points_dict
 
     
-def find_max_values_across_all_durations(locations, durations, duration_dict):  
+def find_max_values_across_all_durations(locations, durations, blockages, duration_dict):  
     """Find the highest quantity value for all storm durations at specified locations.
     
     Input
@@ -168,19 +171,28 @@ def find_max_values_across_all_durations(locations, durations, duration_dict):
     """
     
     max_points_dict = {}
+    
+
     for location in locations:
         # Calculate and store max values across all durations
         max_value = 0
         for duration in durations:
+ 				
+ 	        # there is an error here somewhere because it is not returing the MAX from the stored data 
+ 			
             points_dict = duration_dict[duration]
+   
             one_up_filename, value, mean = points_dict[location]
-            #print(location, one_up_filename, value, mean)            
+            
+            print(location, one_up_filename, value, mean)      
+                  
             if value > max_value:
+ 			
                 max_value = value
                 max_points_dict[location] = (one_up_filename, max_value, mean)
-
-        one_up_filename, value, mean = max_points_dict[location]
-        #print('Max found to be', location, one_up_filename, max_value, mean)                
+ 	
+            one_up_filename, value, mean = max_points_dict[location]
+        print('Max found to be', location, one_up_filename, max_value, mean)                
     return max_points_dict
 
     
@@ -188,22 +200,24 @@ def post_process(durations, locations, storm, quantity, proc_directory, blockage
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
+    
+    THIS WORKS!!!!!
     """
     
     duration_dict = {}
-    for duration in durations: 
+    for duration in durations:
+		
         for blockage in blockages:
 		
-            event = str(storm)+'%AEP'+str(duration)+'m_' + blockage
-            fromdir = proc_directory+event+'/'+quantity
-            print ('fromdir loc', fromdir, locations)
+            fromdir = proc_directory+str(storm)+'%AEP'+str(duration)+'m_' + blockage+'/'+quantity
+            #print ('fromdir loc', fromdir, locations)
             points_dict = critical_duration_pattern(fromdir, locations)
             
             # Store result for this duration
             duration_dict[duration] = points_dict
-            
-    max_points_dict = find_max_values_across_all_durations(locations, durations, duration_dict)   
-    return max_points_dict    
+       
+    max_points_dict = find_max_values_across_all_durations(locations, durations, blockages, duration_dict)  
+    return max_points_dict
 
     
 def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
@@ -211,6 +225,8 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     The maximum values will be stored in the destination files.
     
     Note this works perfectly, do not touch it
+    
+    THIS WORKS!!!!!  
     """
     
     # Relate ANUGA quanties to directories with abbreviated names
@@ -268,7 +284,9 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
             
 	
 def write_ARR_results(outname, points_dict):
-    
+    """
+    THIS WORKS!!!!!  
+    """    
     f = open(outname, 'w')
     f.write('Easting, Northing, Max_Value, critical_DUR/PAT, Mean\n')
         
