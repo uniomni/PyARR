@@ -238,14 +238,14 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     # FIXME (Ole): May move output_quantities and MyTimeStep to the general config section
         
     # Ensure destination directory exists
-    os.makedirs(destdir, exists_ok=True)  # succeeds even if directory exists.
+    os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
     print('Confirmed destdir', destdir)
     
     # Create directories for each quantity
     destdir_quantity = {}
     for Q in output_quantities:
         destdir_quantity[Q] = os.path.join(destdir, output_quantities[Q])
-        os.makedirs(destdir_quantity[Q], exists_ok=True)
+        os.makedirs(destdir_quantity[Q], exist_ok=True)
 
     # Get sww files from data directory
     pattern = os.path.join(fromdir, filepattern)
