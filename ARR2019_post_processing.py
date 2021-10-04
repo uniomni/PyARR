@@ -9,11 +9,7 @@ import glob
 import os.path
 from os.path import *
 from osgeo import gdal
-
 from numpy import array, float, resize
-#from anuga.file.netcdf import NetCDFFile
-#from anuga.geospatial_data.geospatial_data import Geospatial_data
-#from anuga.file_conversion import sww2dem
 from anuga.utilities import plot_utils
 
 
@@ -28,6 +24,71 @@ Algorithm is very simplistic but will work well for small data sets
 
 Ole Nielsen - 2021
 """
+
+
+def sww2maxTIF(fromdir, destdir, CellSize=1.0, MyTimeStep='max', filepattern='*.sww'):
+    """Generate geotiff files from ANUGA sww files for four quantities. 
+    The maximum values will be stored in the destination files.
+    
+    """
+    
+    # Relate ANUGA quanties to directories with abbreviated names
+    output_quantities = {'depth': 'D', 
+                         'velocity': 'V',
+                         'depthIntegratedVelocity': 'VD',
+                         'stage': 'WL'}
+                         
+    MyTimeStep = MyTimeStep #'max' # Used in MakeGeotif and associated filename creation 
+    # FIXME (Ole): May move output_quantities and MyTimeStep to the general config section
+    
+    # Ole, i have added MyTimeStep into ARR2019_config.py, but only works if we want 'all, 'last' or 'max' outputs, i dont know how to make it do individualt yieldsteps which are strings
+        
+    # Ensure destination directory exists
+    os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
+    print('Confirmed destdir', destdir)
+    
+    # Create directories for each quantity
+    destdir_quantity = {}
+    for Q in output_quantities:
+        destdir_quantity[Q] = os.path.join(destdir, output_quantities[Q])
+        os.makedirs(destdir_quantity[Q], exist_ok=True)
+
+    # Get sww files from data directory
+    pattern = os.path.join(fromdir, filepattern)
+    filenames = glob.glob(pattern) 
+
+    for filename in filenames:
+        head, file = os.path.split(filename)
+        print()
+        print('Converting %s to %s' % (filename, destdir))
+        
+        storm_pattern, _ = os.path.splitext(file)
+        
+        for Q in output_quantities:
+            
+            output_filename = os.path.join(destdir, 
+                                           destdir_quantity[Q], 
+                                           storm_pattern + '_' + Q + '_' + MyTimeStep + '.tif')
+                                           
+            if os.path.isfile(output_filename):
+                print('Already computed', output_filename)
+            else: 
+                print('Computing', output_filename)
+           
+            
+                plot_utils.Make_Geotif(
+                    swwFile=filename, 
+                    output_quantities=[Q],
+                    output_dir=destdir_quantity[Q],
+   	            myTimeStep=MyTimeStep,
+   	            CellSize=CellSize, 
+   	            velocity_extrapolation=True, 
+   	            min_allowed_height=0.01, 
+   	            EPSG_CODE=28356, # EPSG_CODE=28356 is for MGA Zone 56 GDA1994, EPSG_CODE=7856 is for MGA Zone 56 GDA2020, codes for other locations search for EPSG_CODE on the web https://epsg.io/
+   	            verbose=False, 
+   	            k_nearest_neighbours=3)
+   	            
+   	            
 
 def find_average_element(filename_list):
     """ Find element closest to the mean from above
@@ -61,7 +122,6 @@ def find_average_element(filename_list):
      mean, (filename, value) e.g.
      1.07459002, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
 	 
-    THIS WORKS!!!!!
     """
     
     if len(filename_list) == 0:
@@ -105,10 +165,7 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
             
     Where value is the value of this quantity at this location and 
     mean the average of this value across all storm patterns as calculate by find_average_element()
-    
-    
-    
-    THIS WORKS!!!!!        
+           
     """
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
@@ -144,11 +201,12 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
             
         mean, (one_up_filename, value) = find_average_element(filename_list)
         points_dict[point] = (one_up_filename, value, mean)     
-        print (one_up_filename, value, mean)
+        print (point, one_up_filename, value, mean)
+        
     return points_dict
 
     
-def find_max_values_across_all_durations(locations, durations, blockages, duration_dict):  
+def find_max_values_across_all_durations(locations, duration_dict):  
     """Find the highest quantity value for all storm durations at specified locations.
     
     Input
@@ -176,116 +234,54 @@ def find_max_values_across_all_durations(locations, durations, blockages, durati
     for location in locations:
         # Calculate and store max values across all durations
         max_value = 0
-        for duration in durations:
- 				
- 	        # there is an error here somewhere because it is not returing the MAX from the stored data 
- 			
-            points_dict = duration_dict[duration]
-   
-            one_up_filename, value, mean = points_dict[location]
-            
-            print(location, one_up_filename, value, mean)      
-                  
-            if value > max_value:
- 			
-                max_value = value
-                max_points_dict[location] = (one_up_filename, max_value, mean)
- 	
+
+        points_dict = duration_dict
+	    
+        one_up_filename, value, mean = points_dict[location]
+        
+        print(location, one_up_filename, value, mean)      
+              
+        if value > max_value:
+	    
+            max_value = value
+            max_points_dict[location] = (one_up_filename, max_value, mean)
             one_up_filename, value, mean = max_points_dict[location]
-        print('Max found to be', location, one_up_filename, max_value, mean)                
+        
+        print('Max found to be', location, one_up_filename, max_value, mean)
+                      
     return max_points_dict
 
     
-def post_process(durations, locations, storm, quantity, proc_directory, blockages):          
+def post_process(locations, quantity, proc_directory):          
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
-    
-    THIS WORKS!!!!!
+
     """
     
     duration_dict = {}
-    for duration in durations:
+    #for duration in durations:
+			
+    sub_folders = [name for name in os.listdir(proc_directory) if os.path.isdir(os.path.join(proc_directory, name))]
+
+    for folder in sub_folders:
 		
-        for blockage in blockages:
-		
-            fromdir = proc_directory+str(storm)+'%AEP'+str(duration)+'m_' + blockage+'/'+quantity
-            #print ('fromdir loc', fromdir, locations)
-            points_dict = critical_duration_pattern(fromdir, locations)
-            
-            # Store result for this duration
-            duration_dict[duration] = points_dict
+        #print('directory: ', folder)    
+        fromdir = proc_directory + folder + '/' + quantity
+        #print ('fromdir loc', fromdir, locations)
+        points_dict = critical_duration_pattern(fromdir, locations)
+        duration_dict = points_dict
        
-    max_points_dict = find_max_values_across_all_durations(locations, durations, blockages, duration_dict)  
+    max_points_dict = find_max_values_across_all_durations(locations, duration_dict) 
+     
     return max_points_dict
 
     
-def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
-    """Generate geotiff files from ANUGA sww files for four quantities. 
-    The maximum values will be stored in the destination files.
-    
-    Note this works perfectly, do not touch it
-    
-    THIS WORKS!!!!!  
-    """
-    
-    # Relate ANUGA quanties to directories with abbreviated names
-    output_quantities = {'depth': 'D', 
-                         'velocity': 'V',
-                         'depthIntegratedVelocity': 'VD',
-                         'stage': 'WL'}
-    MyTimeStep = 'max' # Used in MakeGeotif and associated filename creation 
-    # FIXME (Ole): May move output_quantities and MyTimeStep to the general config section
-        
-    # Ensure destination directory exists
-    os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
-    print('Confirmed destdir', destdir)
-    
-    # Create directories for each quantity
-    destdir_quantity = {}
-    for Q in output_quantities:
-        destdir_quantity[Q] = os.path.join(destdir, output_quantities[Q])
-        os.makedirs(destdir_quantity[Q], exist_ok=True)
-
-    # Get sww files from data directory
-    pattern = os.path.join(fromdir, filepattern)
-    filenames = glob.glob(pattern) 
-
-    for filename in filenames:
-        head, file = os.path.split(filename)
-        print()
-        print('Converting %s to %s' % (filename, destdir))
-        
-        storm_pattern, _ = os.path.splitext(file)
-        
-        for Q in output_quantities:
-            
-            output_filename = os.path.join(destdir, 
-                                           destdir_quantity[Q], 
-                                           storm_pattern + '_' + Q + '_' + MyTimeStep + '.tif')
-                                           
-            if os.path.isfile(output_filename):
-                print('Already computed', output_filename)
-            else: 
-                print('Computing', output_filename)
-           
-            
-                plot_utils.Make_Geotif(
-                    swwFile=filename, 
-                    output_quantities=[Q],
-                    output_dir=destdir_quantity[Q],
-   	            myTimeStep=MyTimeStep,
-   	            CellSize=CellSize, 
-   	            velocity_extrapolation=True, 
-   	            min_allowed_height=0.01, 
-   	            EPSG_CODE=28356, # EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web 
-   	            verbose=False, 
-   	            k_nearest_neighbours=3)
             
 	
 def write_ARR_results(outname, points_dict):
     """
-    THIS WORKS!!!!!  
+
     """    
     f = open(outname, 'w')
     f.write('Easting, Northing, Max_Value, critical_DUR/PAT, Mean\n')
