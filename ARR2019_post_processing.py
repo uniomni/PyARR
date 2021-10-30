@@ -4,16 +4,13 @@
 
 import shutil
 import numpy
+import numpy as np
 import os
 import glob
 import os.path
 from os.path import *
 from osgeo import gdal
-
 from numpy import array, float, resize
-#from anuga.file.netcdf import NetCDFFile
-#from anuga.geospatial_data.geospatial_data import Geospatial_data
-#from anuga.file_conversion import sww2dem
 from anuga.utilities import plot_utils
 
 
@@ -61,7 +58,6 @@ def find_average_element(filename_list):
      mean, (filename, value) e.g.
      1.07459002, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
 	 
-    THIS WORKS!!!!!
     """
     
     if len(filename_list) == 0:
@@ -144,11 +140,12 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
             
         mean, (one_up_filename, value) = find_average_element(filename_list)
         points_dict[point] = (one_up_filename, value, mean)     
-        print (one_up_filename, value, mean)
+        print (point, one_up_filename, value, mean)
+        
     return points_dict
 
     
-def find_max_values_across_all_durations(locations, durations, blockages, duration_dict):  
+def find_max_values_across_all_durations(locations, duration_dict):  
     """Find the highest quantity value for all storm durations at specified locations.
     
     Input
@@ -171,32 +168,29 @@ def find_max_values_across_all_durations(locations, durations, blockages, durati
     """
     
     max_points_dict = {}
-    
 
     for location in locations:
         # Calculate and store max values across all durations
         max_value = 0
-        for duration in durations:
- 				
- 	        # there is an error here somewhere because it is not returing the MAX from the stored data 
- 			
-            points_dict = duration_dict[duration]
-   
-            one_up_filename, value, mean = points_dict[location]
-            
-            print(location, one_up_filename, value, mean)      
-                  
-            if value > max_value:
- 			
-                max_value = value
-                max_points_dict[location] = (one_up_filename, max_value, mean)
- 	
+
+        points_dict = duration_dict
+	    
+        one_up_filename, value, mean = points_dict[location]
+        
+        print(location, one_up_filename, value, mean)      
+              
+        if value > max_value:
+	    
+            max_value = value
+            max_points_dict[location] = (one_up_filename, max_value, mean)
             one_up_filename, value, mean = max_points_dict[location]
-        print('Max found to be', location, one_up_filename, max_value, mean)                
+          
+        print('Max found to be', location, one_up_filename, max_value, mean)
+                      
     return max_points_dict
 
     
-def post_process(durations, locations, storm, quantity, proc_directory, blockages):          
+def post_process(locations, quantity, proc_directory):          
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
@@ -205,18 +199,20 @@ def post_process(durations, locations, storm, quantity, proc_directory, blockage
     """
     
     duration_dict = {}
-    for duration in durations:
+    #for duration in durations:
+			
+    sub_folders = [name for name in os.listdir(proc_directory) if os.path.isdir(os.path.join(proc_directory, name))]
+
+    for folder in sub_folders:
 		
-        for blockage in blockages:
-		
-            fromdir = proc_directory+str(storm)+'%AEP'+str(duration)+'m_' + blockage+'/'+quantity
-            #print ('fromdir loc', fromdir, locations)
-            points_dict = critical_duration_pattern(fromdir, locations)
-            
-            # Store result for this duration
-            duration_dict[duration] = points_dict
-       
-    max_points_dict = find_max_values_across_all_durations(locations, durations, blockages, duration_dict)  
+        #print('directory: ', folder)    
+        fromdir = proc_directory + folder + '/' + quantity
+        #print ('fromdir loc', fromdir, locations)
+        points_dict = critical_duration_pattern(fromdir, locations)
+        duration_dict = points_dict
+
+    max_points_dict = find_max_values_across_all_durations(locations, duration_dict)  
+
     return max_points_dict
 
     
@@ -285,7 +281,7 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
 	
 def write_ARR_results(outname, points_dict):
     """
-    THIS WORKS!!!!!  
+
     """    
     f = open(outname, 'w')
     f.write('Easting, Northing, Max_Value, critical_DUR/PAT, Mean\n')
