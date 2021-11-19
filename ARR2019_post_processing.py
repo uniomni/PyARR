@@ -4,18 +4,25 @@
 
 import shutil
 import numpy
+import numpy as np
 import os
 import glob
 import os.path
 from os.path import *
 from osgeo import gdal
-
+from easygui import *
+from os.path import expanduser
 from numpy import array, float, resize
-#from anuga.file.netcdf import NetCDFFile
-#from anuga.geospatial_data.geospatial_data import Geospatial_data
-#from anuga.file_conversion import sww2dem
 from anuga.utilities import plot_utils
 
+""" use easygui to select your data directory
+"""
+
+data_directory = '/home/ro/Work/Petar-2021/PyARR-postprocessed-data/1%AEP/'
+
+#data_directory = diropenbox('Select data directory', default=expanduser('~'))
+#data_directory = data_directory + '/'
+print ('data directory', data_directory) 
 
 """
 
@@ -61,7 +68,6 @@ def find_average_element(filename_list):
      mean, (filename, value) e.g.
      1.07459002, (1%AEP10m_P6_unblocked_depth_max, 1.0747306) 
 	 
-    THIS WORKS!!!!!
     """
     
     if len(filename_list) == 0:
@@ -112,6 +118,9 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
     """
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
+    
+    if len(filenames) == 0:
+        raise BaseException(f'Did not find any files matching pattern {pattern}')
 
     points_dict = {}  # Dictionary to hold return values (one_up_filename, value, mean) for each point
     for point in locations:
@@ -144,11 +153,12 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
             
         mean, (one_up_filename, value) = find_average_element(filename_list)
         points_dict[point] = (one_up_filename, value, mean)     
-        print (one_up_filename, value, mean)
+        print (point, one_up_filename, value, mean)
+        
     return points_dict
 
     
-def find_max_values_across_all_durations(locations, durations, blockages, duration_dict):  
+def find_max_values_across_all_durations(locations, duration_dict):  
     """Find the highest quantity value for all storm durations at specified locations.
     
     Input
@@ -167,36 +177,36 @@ def find_max_values_across_all_durations(locations, durations, blockages, durati
        max_points_dict: Dictionary of point information with the maximum value and mean. E.g.
        {(306679.877, 6187525.723): ('1%AEP360m_P9_unblocked_stage_max.tif', 2.9336274, 2.9184953212738036), 
         (305829.954, 6188350.062): ('1%AEP45m_P6_unblocked_stage_max.tif', 17.372875, 17.361011505126953)}
-
+    
+    
+    
+    I think the issues is somewher ein this function
     """
     
     max_points_dict = {}
-    
 
     for location in locations:
         # Calculate and store max values across all durations
         max_value = 0
-        for duration in durations:
- 				
- 	        # there is an error here somewhere because it is not returing the MAX from the stored data 
- 			
-            points_dict = duration_dict[duration]
-   
-            one_up_filename, value, mean = points_dict[location]
-            
-            print(location, one_up_filename, value, mean)      
-                  
-            if value > max_value:
- 			
-                max_value = value
-                max_points_dict[location] = (one_up_filename, max_value, mean)
- 	
+
+        points_dict = duration_dict
+	    
+        one_up_filename, value, mean = points_dict[location]
+        
+        print(location, one_up_filename, value, mean)      
+              
+        if value > max_value:
+	    
+            max_value = value
+            max_points_dict[location] = (one_up_filename, max_value, mean)
             one_up_filename, value, mean = max_points_dict[location]
-        print('Max found to be', location, one_up_filename, max_value, mean)                
+          
+        print('Max found to be', location, one_up_filename, max_value, mean)
+                      
     return max_points_dict
 
     
-def post_process(durations, locations, storm, quantity, proc_directory, blockages):          
+def post_process(locations, quantity, data_directory):          
     """For each location calculate the maximum value from a given storm and quantity across all durations.
     
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
@@ -205,28 +215,27 @@ def post_process(durations, locations, storm, quantity, proc_directory, blockage
     """
     
     duration_dict = {}
-    for duration in durations:
+    #for duration in durations:
+			
+    sub_folders = [name for name in os.listdir(data_directory) if os.path.isdir(os.path.join(data_directory, name))]
+
+    for folder in sub_folders:
 		
-        for blockage in blockages:
-		
-            fromdir = proc_directory+str(storm)+'%AEP'+str(duration)+'m_' + blockage+'/'+quantity
-            #print ('fromdir loc', fromdir, locations)
-            points_dict = critical_duration_pattern(fromdir, locations)
-            
-            # Store result for this duration
-            duration_dict[duration] = points_dict
-       
-    max_points_dict = find_max_values_across_all_durations(locations, durations, blockages, duration_dict)  
+        #print('directory: ', folder)    
+        fromdir = data_directory + folder + '/' + quantity
+        #print ('fromdir loc', fromdir, locations)
+        points_dict = critical_duration_pattern(fromdir, locations)
+        duration_dict = points_dict
+
+    max_points_dict = find_max_values_across_all_durations(locations, duration_dict)  
+
     return max_points_dict
 
     
 def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     """Generate geotiff files from ANUGA sww files for four quantities. 
     The maximum values will be stored in the destination files.
-    
-    Note this works perfectly, do not touch it
-    
-    THIS WORKS!!!!!  
+
     """
     
     # Relate ANUGA quanties to directories with abbreviated names
@@ -281,11 +290,83 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
    	            EPSG_CODE=28356, # EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web 
    	            verbose=False, 
    	            k_nearest_neighbours=3)
-            
-	
+               
+
+
+def maxTIF2meanTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
+
+    pattern = os.path.join(fromdir, filepattern)
+    filenames = glob.glob(pattern) 
+
+    res = []
+    for filename in filenames:
+        ds = gdal.Open(filename)
+        res.append(ds.GetRasterBand(1).ReadAsArray()) # We assume that all rasters has a single band
+    stacked = np.dstack(res) # We assume that all rasters have the same dimensions
+    mean = np.mean(stacked, axis=-1)
+
+    #path_list = fromdir.split(os.sep) 
+    #print ('pathlist', path_list)
+    
+
+    outfile = folder + '_' + quantity + '_' + peaks +'.tif'
+    print ('Creating mean:', outfile)
+    driver = gdal.GetDriverByName('GTiff')
+    result = driver.CreateCopy(data_directory + outfile, gdal.Open(filenames[0]))
+    result.GetRasterBand(1).WriteArray(mean)
+    result = None    
+
+# median calculations
+def maxTIF2medianTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
+
+    pattern = os.path.join(fromdir, filepattern)
+    filenames = glob.glob(pattern) 
+
+    res = []
+    for filename in filenames:
+        ds = gdal.Open(filename)
+        res.append(ds.GetRasterBand(1).ReadAsArray()) # We assume that all rasters has a single band
+    stacked = np.dstack(res) # We assume that all rasters have the same dimensions
+    median = np.median(stacked, axis=-1)
+
+    #path_list = fromdir.split(os.sep) 
+    #print ('pathlist', path_list)
+    
+
+    outfile = folder + '_' + quantity + '_' + peaks +'.tif'  
+    print ('Creating median: ', outfile)
+    driver = gdal.GetDriverByName('GTiff')
+    result = driver.CreateCopy(data_directory + outfile, gdal.Open(filenames[0]))
+    result.GetRasterBand(1).WriteArray(median)
+    result = None  
+
+def meanTIF2maxTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
+
+    pattern = os.path.join(fromdir, filepattern)
+    filenames = glob.glob(pattern) 
+    
+    res = []
+    for filename in filenames:
+        ds = gdal.Open(filename)
+        res.append(ds.GetRasterBand(1).ReadAsArray()) # We assume that all rasters has a single band
+    stacked = np.dstack(res) # We assume that all rasters have the same dimensions
+    maximum = np.max(stacked, axis=-1)
+
+    path_list = data_directory.split(os.sep)
+    #print ('pathlist', path_list, path_list[-2])
+
+    outfile = path_list[-2] + '_' + quantity + '_' + peaks + '_peakofpeaks.tif'
+    print ('Creating peak of peaks: ', outfile)
+    driver = gdal.GetDriverByName('GTiff')
+    result = driver.CreateCopy(data_directory + '/' + outfile, gdal.Open(filenames[0]))
+    result.GetRasterBand(1).WriteArray(maximum)
+    result = None
+    
+    
+        	
 def write_ARR_results(outname, points_dict):
     """
-    THIS WORKS!!!!!  
+
     """    
     f = open(outname, 'w')
     f.write('Easting, Northing, Max_Value, critical_DUR/PAT, Mean\n')

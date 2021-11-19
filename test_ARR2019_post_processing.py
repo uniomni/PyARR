@@ -95,7 +95,7 @@ class TestFindMeanDepth(unittest.TestCase):
                          {(306679.877, 6187525.723): ('1%AEP720m_P10_unblocked_stage_max.tif', 2.899273, 2.883800721168518), 
                           (305829.954, 6188350.062): ('1%AEP720m_P2_unblocked_stage_max.tif', 17.251663, 17.241789054870605)}}
 
-        max_points_dict = find_max_values_across_all_durations(locations, durations, duration_dict)
+        max_points_dict = find_max_values_across_all_durations(locations, duration_dict)
         
         assert len(max_points_dict) == 2
         assert (306679.877, 6187525.723) in max_points_dict

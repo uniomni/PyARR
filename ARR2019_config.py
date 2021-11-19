@@ -1,44 +1,41 @@
-"""Common parameters for ARR2019
+""" Config file
+    
+    Enter quantities and grid resolution (cell size) you want to process for 1_sww2maxTIF.py
+    locations are required when using 2_critical_duration_patterns.py
+    
 """
+  
+quantities = ['WL']#,'D','V','VD']
+peaks = 'mean' # can be only 'mean' or 'median'
 
-from easygui import *        
-from os.path import expanduser
- 
-storms = [1] # 1=1%AEP, 2=2%AEP etc
-durations = [10,15,20,25,30,45,60,90,120,180,270,360,540,720] #,1080,1440,1800,2160,2880,4320] # do not touch these as they are the standard ARR2019 durations
-quantities = ['WL'] #,'D']#,'V','VD'] # but we probably are only interested in WL only which dur/pat is critical for max water level
-
-
-# OLE please fix blockage, can this be made into a list as well?????
-blockages = ['unblocked'] #,'WCC2016' # these are Wollongong City Councils standard blockages
-
-#### ENTER DIRECTORY LOCATION HERE ###
-#root_directory = '/models/1%AEP/' # this is critical for the scripts to run, you must put all your files in a folder called files
-root_directory = '/Work/Petar-2021/'
-data_directory = expanduser('~') + root_directory + 'PyARR-data/1%AEP/' 
-print('data_directory', data_directory)
-proc_directory = expanduser('~') + root_directory + 'PyARR-postprocessed-data/1%AEP/' 
-print('proc_directory', proc_directory)
-
-##############################################################################################
-###### below uses easygui to allow user to manually choose the location of the data directory
-###### instead of pointing to the path above
-
-#data_directory = diropenbox('Select data directory', default=expanduser('~'))
-#data_directory = data_directory + '/'
-#proc_directory = data_directory + '/PyARR-postprocessed-data/1%AEP/'
-##############################################################################################
-
-
-# List of Easting, Northing coordinates
-locations = [(306679.877,6187525.723),
-             (304761.537,6186312.072)] # added new test location
-            # (305829.954,6188350.062)] 
-            # (305497.573,6187034.980), 
-            # (304762.441,6186692.149), 
-            # (304979.435,6186066.239), 
-            # (306679.387,6186665.085), 
-            # (306954.652,6187838.069)] 
-
-# Resolution of grids                          
-CellSize = 1.0 
+# List of Easting, Northing coordinates where you want to extract critical data
+locations = [
+    # # Brooks
+    # (299227.614,6180030.808),
+    # (298442.103,6180281.279),
+    # (298359.289,6180243.119),
+    # (298110.037,6180144.068),
+    # (298020.728,6180093.730),
+    # (297281.902,6179044.590),
+    # (297804.298,6178532.325)
+#]
+     ## Wollongong
+     (306679.877,6187525.723),
+    #     (305829.954,6188350.062),
+#     (306954.652,6187838.069),
+#     (304979.435,6186066.239),
+#     (304762.441,6186692.149),
+#     (306679.387,6186665.085),
+#     (305497.573,6187034.980),
+#     (305990.960,6188287.694),
+#     (304749.056,6188457.339),
+#     (305906.461,6187466.665),
+#     (305301.157,6187701.923),
+#     (306666.197,6187442.171),
+#     (306547.764,6187254.406),
+#     (304761.537,6186312.072),
+#     (306636.123,6186148.427),
+#     (305712.674,6186863.814),
+#     (305456.766,6187025.880)
+    
+]
