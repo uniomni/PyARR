@@ -255,10 +255,13 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
                
 
 
-def maxTIF2meanTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
+def maxTIF2meanTIF(data_directory, fromdir, folder, quantity, peaks, filepattern='*.tif'):
 
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
+    
+    if len(filenames) == 0:
+        raise BaseException(f'No files found in {fromdir}')
 
     res = []
     for filename in filenames:
@@ -284,6 +287,9 @@ def maxTIF2medianTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
 
+    if len(filenames) == 0:
+        raise BaseException(f'No files found in {fromdir}')
+    
     res = []
     for filename in filenames:
         ds = gdal.Open(filename)
@@ -306,7 +312,10 @@ def meanTIF2maxTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
 
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
-    
+
+    if len(filenames) == 0:
+        raise BaseException(f'No files found in {fromdir}')
+        
     res = []
     for filename in filenames:
         ds = gdal.Open(filename)

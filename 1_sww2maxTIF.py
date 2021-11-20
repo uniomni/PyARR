@@ -5,7 +5,7 @@ It will convert a collection of sww files to TIF with maximum values of selected
 """
 
 import os.path
-from ARR2019_config import data_directory, storm
+from ARR2019_config import root_directory, storm
 from ARR2019_post_processing import sww2maxTIF
 
 CellSize = 1.0  # change cellsize to what ever grid size you want
