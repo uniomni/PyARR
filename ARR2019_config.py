@@ -11,13 +11,13 @@ from easygui import *
   
 # Set data directory
 #root_directory = diropenbox('Select data directory', default=expanduser('~'))
-root_directory = '/home/ro/Work/Petar-2021/PyARR-data/1%AEP
+root_directory = '/home/ro/Work/Petar-2021/PyARR-data/1%AEP'
 
 # Get rid of redundant separators
-data_directory = os.path.normpath(data_directory)
+root_directory = os.path.normpath(root_directory)
 
 # Get storm event from tail of data directory (e.g. 1%AEP)
-storm = os.path.split(data_directory)[-1]
+storm = os.path.split(root_directory)[-1]
 
 #mode='median'
 mode='mean'
@@ -40,8 +40,8 @@ locations = [
      #(306679.877,6187525.723),
      #(305829.954,6188350.062),
      (306954.652,6187838.069),
-#     (304979.435,6186066.239),
-#     (304762.441,6186692.149),
+     (304979.435,6186066.239),
+     (304762.441,6186692.149),
 #     (306679.387,6186665.085),
 #     (305497.573,6187034.980),
 #     (305990.960,6188287.694),
