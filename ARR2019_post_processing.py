@@ -85,17 +85,21 @@ def find_average_element(filename_list, mode='mean'):
             values.append(y[0])
         res = median(values)
     
-    # Now find element immediately greater than average
-    i = 0
-    y = Y[0][0] 
-    while(y <= res):
-        i += 1
-        y = Y[i][0]
+    if len(Y) == 1:
+        # In case only one filename was passed
+        return res, (filename_list[0], res)    
+    else:
+       # Now find element immediately greater than average
+       i = 0
+       y = Y[0][0] 
+       while(y <= res):
+           i += 1
+           y = Y[i][0]
 
-    filename = Y[i][1]
-    value = Y[i][0]
+       filename = Y[i][1]
+       value = Y[i][0]
     
-    return res, (filename, value)
+       return res, (filename, value)
     
 
 

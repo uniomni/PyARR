@@ -1,6 +1,6 @@
 import unittest
 
-from ARR2019_post_processing import find_average_element, find_max_values_across_all_durations
+from ARR2019_post_processing import find_average_element, post_process
 
 class TestFindMeanDepth(unittest.TestCase):
 
@@ -32,14 +32,41 @@ class TestFindMeanDepth(unittest.TestCase):
                    ('1%AEP10m_P3_unblocked_stage_max', 1.868309)]
                   
 
+    def test_average_element_edge_case(self):
+        mean, (filename, depth) = find_average_element([('1%AEP10m_P4_unblocked_depth_max', 1.0737015)], mode='mean')
+        assert mean == 1.0737015, 'Mean value should have been %f, I got %f' % (1.0737015, mean)        
+        
+        median, (filename, depth) = find_average_element([('1%AEP10m_P4_unblocked_depth_max', 1.0737015)], mode='median')
+        assert median == 1.0737015, 'Mean value should have been %f, I got %f' % (1.0737015, median)                
     
-    def test_depth(self):
-        mean, (filename, depth) = find_average_element(self.X)
+    def test_depth_mean(self):
+        mean, (filename, depth) = find_average_element(self.X, mode='mean')
 
         assert mean == 1.07459002, 'Mean value should have been %f, I got %f' % (1.07459002, mean)
         assert filename == '1%AEP10m_P6_unblocked_depth_max', 'Name should have been %s, I got %s' % ('1%AEP10m_P6_unblocked_depth_max', filename)
         assert depth == 1.0747306, 'Depth should have been %f, I got %f' % (1.0747306, depth)    
+
+    def test_depth_median(self):
+        median, (filename, depth) = find_average_element(self.X, mode='median')
+
+        import statistics
+        X = [1.0737015, 
+             1.0736489, 
+             1.0767846, 
+             1.0747306, 
+             1.073645, 
+             1.0737189, 
+             1.0760777, 
+             1.0748001, 
+             1.0749958, 
+             1.0737971]
+        ref = statistics.median(X)
+                                 
+        assert median == ref, 'Mean value should have been %f, I got %f' % (ref, median)
+        assert filename == '1%AEP10m_P6_unblocked_depth_max', 'Name should have been %s, I got %s' % ('1%AEP10m_P6_unblocked_depth_max', filename)
+        assert depth == 1.0747306, 'Depth should have been %f, I got %f' % (1.0747306, depth)    
         
+                
     def test_level1(self):
         mean, (filename, stage) = find_average_element(self.X1)
 
@@ -48,54 +75,56 @@ class TestFindMeanDepth(unittest.TestCase):
         assert stage == 1.8692424, 'Stage should have been %f, I got %f' % (1.8692424, stage)
 
         
-    def test_maximum_value_over_all_durations(self):
+    def Xtest_post_processing(self):
     
         locations = [(306679.877, 6187525.723), (305829.954, 6188350.062)]
-        durations = [10, 15, 20, 25, 30, 45, 60, 90, 120, 180, 270, 360, 540, 720]
-        duration_dict = {10: 
-                         {(306679.877, 6187525.723): ('1%AEP10m_P6_unblocked_stage_max.tif', 1.8806984, 1.8805007934570312), 
-                          (305829.954, 6188350.062): ('1%AEP10m_P6_unblocked_stage_max.tif', 17.197166, 17.196933555603028)}, 
-                         15: 
-                         {(306679.877, 6187525.723): ('1%AEP15m_P7_unblocked_stage_max.tif', 2.0994844, 2.0985819816589357), 
-                          (305829.954, 6188350.062): ('1%AEP15m_P7_unblocked_stage_max.tif', 17.277727, 17.27648296356201)}, 
-                         20: 
-                         {(306679.877, 6187525.723): ('1%AEP20m_P6_unblocked_stage_max.tif', 2.2385228, 2.2365264654159547), 
-                          (305829.954, 6188350.062): ('1%AEP20m_P6_unblocked_stage_max.tif', 17.321676, 17.320402908325196)}, 
-                         25: 
-                         {(306679.877, 6187525.723): ('1%AEP25m_P3_unblocked_stage_max.tif', 2.3262367, 2.3259199619293214), 
-                          (305829.954, 6188350.062): ('1%AEP25m_P5_unblocked_stage_max.tif', 17.344303, 17.342819213867188)}, 
-                         30: 
-                         {(306679.877, 6187525.723): ('1%AEP30m_P1_unblocked_stage_max.tif', 2.3853638, 2.381312394142151), 
-                          (305829.954, 6188350.062): ('1%AEP30m_P6_unblocked_stage_max.tif', 17.34834, 17.346133995056153)}, 
-                         45: 
-                         {(306679.877, 6187525.723): ('1%AEP45m_P2_unblocked_stage_max.tif', 2.5309923, 2.528971242904663), 
-                          (305829.954, 6188350.062): ('1%AEP45m_P6_unblocked_stage_max.tif', 17.372875, 17.361011505126953)}, 
-                         60: 
-                         {(306679.877, 6187525.723): ('1%AEP60m_P9_unblocked_stage_max.tif', 2.6182287, 2.609315609931946), 
-                          (305829.954, 6188350.062): ('1%AEP60m_P6_unblocked_stage_max.tif', 17.355389, 17.347461318969728)}, 
-                         90: 
-                         {(306679.877, 6187525.723): ('1%AEP90m_P5_unblocked_stage_max.tif', 2.7221494, 2.7157947540283205), 
-                          (305829.954, 6188350.062): ('1%AEP90m_P6_unblocked_stage_max.tif', 17.352478, 17.35140190124512)}, 
-                         120: 
-                         {(306679.877, 6187525.723): ('1%AEP120m_P2_unblocked_stage_max.tif', 2.7695992, 2.7615134000778196), 
-                          (305829.954, 6188350.062): ('1%AEP120m_P4_unblocked_stage_max.tif', 17.33819, 17.325239181518555)}, 
-                         180: 
-                         {(306679.877, 6187525.723): ('1%AEP180m_P2_unblocked_stage_max.tif', 2.844389, 2.840434193611145), 
-                          (305829.954, 6188350.062): ('1%AEP180m_P9_unblocked_stage_max.tif', 17.310911, 17.306969261169435)}, 
-                         270: 
-                         {(306679.877, 6187525.723): ('1%AEP270m_P5_unblocked_stage_max.tif', 2.8592784, 2.858631157875061), 
-                          (305829.954, 6188350.062): ('1%AEP270m_P7_unblocked_stage_max.tif', 17.290796, 17.288502883911132)}, 
-                         360: 
-                         {(306679.877, 6187525.723): ('1%AEP360m_P9_unblocked_stage_max.tif', 2.9336274, 2.9184953212738036), 
-                          (305829.954, 6188350.062): ('1%AEP360m_P1_unblocked_stage_max.tif', 17.284647, 17.28453483581543)}, 
-                         540: 
-                         {(306679.877, 6187525.723): ('1%AEP540m_P6_unblocked_stage_max.tif', 2.88416, 2.8374516487121584), 
-                          (305829.954, 6188350.062): ('1%AEP540m_P3_unblocked_stage_max.tif', 17.264376, 17.26335048675537)}, 
-                         720: 
-                         {(306679.877, 6187525.723): ('1%AEP720m_P10_unblocked_stage_max.tif', 2.899273, 2.883800721168518), 
-                          (305829.954, 6188350.062): ('1%AEP720m_P2_unblocked_stage_max.tif', 17.251663, 17.241789054870605)}}
+        #durations = [10, 15, 20, 25, 30, 45, 60, 90, 120, 180, 270, 360, 540, 720]
+        #duration_dict = {10: 
+        #                 {(306679.877, 6187525.723): ('1%AEP10m_P6_unblocked_stage_max.tif', 1.8806984, 1.8805007934570312), 
+        #                  (305829.954, 6188350.062): ('1%AEP10m_P6_unblocked_stage_max.tif', 17.197166, 17.196933555603028)}, 
+        #                 15: 
+        #                 {(306679.877, 6187525.723): ('1%AEP15m_P7_unblocked_stage_max.tif', 2.0994844, 2.0985819816589357), 
+        #                  (305829.954, 6188350.062): ('1%AEP15m_P7_unblocked_stage_max.tif', 17.277727, 17.27648296356201)}, 
+        #                 20: 
+        #                 {(306679.877, 6187525.723): ('1%AEP20m_P6_unblocked_stage_max.tif', 2.2385228, 2.2365264654159547), 
+        #                  (305829.954, 6188350.062): ('1%AEP20m_P6_unblocked_stage_max.tif', 17.321676, 17.320402908325196)}, 
+        #                 25: 
+        #                 {(306679.877, 6187525.723): ('1%AEP25m_P3_unblocked_stage_max.tif', 2.3262367, 2.3259199619293214), 
+        #                  (305829.954, 6188350.062): ('1%AEP25m_P5_unblocked_stage_max.tif', 17.344303, 17.342819213867188)}, 
+        #                 30: 
+        #                 {(306679.877, 6187525.723): ('1%AEP30m_P1_unblocked_stage_max.tif', 2.3853638, 2.381312394142151), 
+        #                  (305829.954, 6188350.062): ('1%AEP30m_P6_unblocked_stage_max.tif', 17.34834, 17.346133995056153)}, 
+        #                 45: 
+        #                 {(306679.877, 6187525.723): ('1%AEP45m_P2_unblocked_stage_max.tif', 2.5309923, 2.528971242904663), 
+        #                  (305829.954, 6188350.062): ('1%AEP45m_P6_unblocked_stage_max.tif', 17.372875, 17.361011505126953)}, 
+        #                 60: 
+        #                 {(306679.877, 6187525.723): ('1%AEP60m_P9_unblocked_stage_max.tif', 2.6182287, 2.609315609931946), 
+        #                  (305829.954, 6188350.062): ('1%AEP60m_P6_unblocked_stage_max.tif', 17.355389, 17.347461318969728)}, 
+        #                 90: 
+        #                 {(306679.877, 6187525.723): ('1%AEP90m_P5_unblocked_stage_max.tif', 2.7221494, 2.7157947540283205), 
+        #                  (305829.954, 6188350.062): ('1%AEP90m_P6_unblocked_stage_max.tif', 17.352478, 17.35140190124512)}, 
+        #                 120: 
+        #                 {(306679.877, 6187525.723): ('1%AEP120m_P2_unblocked_stage_max.tif', 2.7695992, 2.7615134000778196), 
+        #                  (305829.954, 6188350.062): ('1%AEP120m_P4_unblocked_stage_max.tif', 17.33819, 17.325239181518555)}, 
+        #                 180: 
+        #                 {(306679.877, 6187525.723): ('1%AEP180m_P2_unblocked_stage_max.tif', 2.844389, 2.840434193611145), 
+        #                  (305829.954, 6188350.062): ('1%AEP180m_P9_unblocked_stage_max.tif', 17.310911, 17.306969261169435)}, 
+        #                 270: 
+        #                 {(306679.877, 6187525.723): ('1%AEP270m_P5_unblocked_stage_max.tif', 2.8592784, 2.858631157875061), 
+        #                  (305829.954, 6188350.062): ('1%AEP270m_P7_unblocked_stage_max.tif', 17.290796, 17.288502883911132)}, 
+        #                 360: 
+        #                 {(306679.877, 6187525.723): ('1%AEP360m_P9_unblocked_stage_max.tif', 2.9336274, 2.9184953212738036), 
+        #                  (305829.954, 6188350.062): ('1%AEP360m_P1_unblocked_stage_max.tif', 17.284647, 17.28453483581543)}, 
+        #3                 540: 
+        #                 {(306679.877, 6187525.723): ('1%AEP540m_P6_unblocked_stage_max.tif', 2.88416, 2.8374516487121584), 
+        #                  (305829.954, 6188350.062): ('1%AEP540m_P3_unblocked_stage_max.tif', 17.264376, 17.26335048675537)}, 
+        #                 720: 
+        #                 {(306679.877, 6187525.723): ('1%AEP720m_P10_unblocked_stage_max.tif', 2.899273, 2.883800721168518), 
+        #                  (305829.954, 6188350.062): ('1%AEP720m_P2_unblocked_stage_max.tif', 17.251663, 17.241789054870605)}}
 
-        max_points_dict = find_max_values_across_all_durations(locations, duration_dict)
+        
+
+        max_points_dict = post_process(locations, 'WL', data_directory, mode='mean')
         
         assert len(max_points_dict) == 2
         assert (306679.877, 6187525.723) in max_points_dict
@@ -111,7 +140,6 @@ class TestFindMeanDepth(unittest.TestCase):
         assert value == 17.372875
         assert mean == 17.361011505126953  
         
-        #for 
                                
 if __name__ == '__main__':
     unittest.main()
