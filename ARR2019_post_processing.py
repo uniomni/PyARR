@@ -13,6 +13,7 @@ from osgeo import gdal
 from easygui import *
 from os.path import expanduser
 from numpy import array, float, resize
+from statistics import median
 from anuga.utilities import plot_utils
 
 """ use easygui to select your data directory
@@ -36,7 +37,7 @@ Algorithm is very simplistic but will work well for small data sets.
 Ole Nielsen - 2021
 """
 
-def find_average_element(filename_list):
+def find_average_element(filename_list, mode='mean'):
     """ Find element closest to the mean from above
     
     Input: List of 2-tuples where each tuple has the form: (string, float)
@@ -73,6 +74,8 @@ def find_average_element(filename_list):
     if len(filename_list) == 0:
         raise BaseException('Fix your ARR2019_config.py file list  Got an empty list: %s' % filename_list)
     
+    assert mode in ['median', 'mean'], 'Parameter mode must be either median or mean. I got ' % mode
+    
     # Sort by value (Schwartzian Transform)
     # Swap order, making 
     # value the first column, filename the second
@@ -81,28 +84,35 @@ def find_average_element(filename_list):
     # Then sort based on value
     Y.sort()
 
-    # Calculate average
-    sum = 0
-    for y in Y:
-        sum += y[0]
-    mean = sum/len(Y)
+    if mode == 'mean':
+        # Calculate average
+        sum = 0
+        for y in Y:
+            sum += y[0]
+        res = sum/len(Y)
+    else:
+        # Calculate median
+        values = []
+        for y in Y:
+            values.append(y[0])
+        res = median(values)
     
     # Now find element immediately greater than average
     i = 0
     y = Y[0][0] 
-    while(y <= mean):
+    while(y <= res):
         i += 1
         y = Y[i][0]
 
     filename = Y[i][1]
     value = Y[i][0]
     
-    return mean, (filename, value)
+    return res, (filename, value)
     
 
 
         
-def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
+def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mean'):
     """Calculate filename with value closest to the mean from above 
        at specified locations.
     
@@ -112,6 +122,7 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
     Where value is the value of this quantity at this location and 
     mean the average of this value across all storm patterns as calculate by find_average_element()
 
+    mode is either 'median' or 'mean'
     """
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
@@ -149,7 +160,7 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
 
             filename_list.append((filename, data_value))
             
-        mean, (one_up_filename, value) = find_average_element(filename_list)
+        mean, (one_up_filename, value) = find_average_element(filename_list, mode=mode)
         
         assert value >= mean, 'Internal Error, call Ole'
         
@@ -160,11 +171,14 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif'):
     return points_dict
 
     
-def post_process(locations, quantity, data_directory):          
+def post_process(locations, quantity, data_directory, mode='mean'):
     """For each location calculate the maximum value for given quantity.
     
+    mode is either 'median' or 'mean'
+        
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
 
+    
     """
     
     max_points_dict = {}
@@ -176,7 +190,7 @@ def post_process(locations, quantity, data_directory):
         max_value = 0
         for folder in sub_folders:
             fromdir = data_directory + folder + '/' + quantity
-            points_dict = critical_duration_pattern(fromdir, locations)
+            points_dict = critical_duration_pattern(fromdir, locations, mode=mode)
             one_up_filename, value, mean = points_dict[point]
             
             if value > max_value:
@@ -320,16 +334,16 @@ def meanTIF2maxTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
     
     
         	
-def write_ARR_results(outname, points_dict):
+def write_ARR_results(outname, points_dict, mode):
     """
 
     """    
     f = open(outname, 'w')
-    f.write('Easting, Northing, Max_Value, critical_DUR/PAT, Mean\n')
+    f.write(f'Easting, Northing, Max_Value, critical_DUR/PAT, {mode.capitalize()}\n')
         
     for point in points_dict:
-        one_up_filename, value, mean = points_dict[point]
+        one_up_filename, value, res = points_dict[point]
         
         f.write('%.3f, %.3f, %.3f, %s, %.3f\n' % (point[0], point[1], value, 
-                                                    os.path.split(one_up_filename)[1], mean))
+                                                    os.path.split(one_up_filename)[1], res))
     f.close()
