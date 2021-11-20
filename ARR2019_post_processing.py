@@ -212,7 +212,7 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     print (fromdir, destdir)
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
-    print('Confirmed destdir', destdir)
+    #print('Confirmed destdir', destdir)
     
     # Create directories for each quantity
     destdir_quantity = {}
@@ -267,7 +267,7 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='
 
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
-    print('Confirmed destdir', destdir)
+    #print('Confirmed destdir', destdir)
     
         
     pattern = os.path.join(fromdir, filepattern)
