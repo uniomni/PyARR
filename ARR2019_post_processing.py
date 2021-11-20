@@ -326,6 +326,7 @@ def meanTIF2maxTIF(fromdir, destdir, quantity, mode, filepattern='*.tif'):
     result.GetRasterBand(1).WriteArray(maximum)
     
     # clean up (delete all xml files)
+    # Doesnt seem to work
     for filename in listdir(destdir):
         if filename.endswith('.xml'):
             os.remove(os.path.join(destdir, filename))        

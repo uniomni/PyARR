@@ -10,8 +10,8 @@ from os.path import expanduser
 from easygui import *
   
 # Set data directory
-#root_directory = diropenbox('Select data directory', default=expanduser('~'))
-root_directory = '/home/ro/Work/Petar-2021/PyARR-data/1%AEP'
+root_directory = diropenbox('Select data directory', default=expanduser('~'))
+#root_directory = '/home/ro/Work/Petar-2021/PyARR-data/1%AEP'
 
 # Get rid of redundant separators
 root_directory = os.path.normpath(root_directory)
