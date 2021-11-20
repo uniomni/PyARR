@@ -4,6 +4,23 @@
     locations are required when using 2_critical_duration_patterns.py
     
 """
+
+import os
+from os.path import expanduser
+from easygui import *
+  
+# Set data directory
+data_directory = diropenbox('Select data directory', default=expanduser('~'))
+#data_directory = '/home/ro/Work/Petar-2021/PyARR-postprocessed-data/1%AEP'
+
+# Get rid of redundant separators
+data_directory = os.path.normpath(data_directory)
+
+# Get storm event from tail of data directory (e.g. 1%AEP)
+storm = os.path.split(data_directory)[-1]
+
+#mode='median'
+mode='mean'
   
 quantities = ['WL']#,'D','V','VD']
 peaks = 'mean' # can be only 'mean' or 'median'

@@ -10,23 +10,11 @@ import glob
 import os.path
 from os.path import *
 from osgeo import gdal
-from easygui import *
-from os.path import expanduser
 from numpy import array, float, resize
 from statistics import median
 from anuga.utilities import plot_utils
 
-""" use easygui to select your data directory
 """
-
-data_directory = '/home/ro/Work/Petar-2021/PyARR-postprocessed-data/1%AEP/'
-
-#data_directory = diropenbox('Select data directory', default=expanduser('~'))
-#data_directory = data_directory + '/'
-print ('data directory', data_directory) 
-
-"""
-
 1. calculate the average or mean of the 10 numbers.
 2. choose the file which is one up from the average (for example it
 will be file '1%AEP10m_P6_unblocked_depth_max' and return the value
@@ -189,7 +177,7 @@ def post_process(locations, quantity, data_directory, mode='mean'):
         
         max_value = 0
         for folder in sub_folders:
-            fromdir = data_directory + folder + '/' + quantity
+            fromdir = os.path.join(data_directory, folder, quantity)
             points_dict = critical_duration_pattern(fromdir, locations, mode=mode)
             one_up_filename, value, mean = points_dict[point]
             
