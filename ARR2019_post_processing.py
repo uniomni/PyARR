@@ -7,6 +7,7 @@ import numpy
 import numpy as np
 import os
 import glob
+from os import listdir
 import os.path
 from os.path import *
 from osgeo import gdal
@@ -256,11 +257,22 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
                
 
 
-def maxTIF2meanTIF(data_directory, fromdir, folder, quantity, peaks, filepattern='*.tif'):
+def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='*.tif'):
+    """
+    Take maximum for each duration and turn them into a mean (or median) tif file.
+    
+    """
+    
+    assert mode in ['median', 'mean'], 'Parameter mode must be either median or mean. I got ' % mode
 
+    # Ensure destination directory exists
+    os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
+    print('Confirmed destdir', destdir)
+    
+        
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
-    
+        
     if len(filenames) == 0:
         raise BaseException(f'No files found in {fromdir}')
 
@@ -269,47 +281,30 @@ def maxTIF2meanTIF(data_directory, fromdir, folder, quantity, peaks, filepattern
         ds = gdal.Open(filename)
         res.append(ds.GetRasterBand(1).ReadAsArray()) # We assume that all rasters has a single band
     stacked = np.dstack(res) # We assume that all rasters have the same dimensions
-    mean = np.mean(stacked, axis=-1)
-
-    #path_list = fromdir.split(os.sep) 
-    #print ('pathlist', path_list)
     
+    if mode == 'mean':
+        res = np.mean(stacked, axis=-1)
+    else:
+        res = np.median(stacked, axis=-1)    
 
-    outfile = folder + '_' + quantity + '_' + peaks +'.tif'
-    print ('Creating mean:', outfile)
+    print ('Creating TIF:', output_filename)
     driver = gdal.GetDriverByName('GTiff')
-    result = driver.CreateCopy(data_directory + outfile, gdal.Open(filenames[0]))
-    result.GetRasterBand(1).WriteArray(mean)
-    result = None    
-
-# median calculations
-def maxTIF2medianTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
-
-    pattern = os.path.join(fromdir, filepattern)
-    filenames = glob.glob(pattern) 
-
-    if len(filenames) == 0:
-        raise BaseException(f'No files found in {fromdir}')
+    result = driver.CreateCopy(os.path.join(destdir, output_filename), gdal.Open(filenames[0]))
     
-    res = []
-    for filename in filenames:
-        ds = gdal.Open(filename)
-        res.append(ds.GetRasterBand(1).ReadAsArray()) # We assume that all rasters has a single band
-    stacked = np.dstack(res) # We assume that all rasters have the same dimensions
-    median = np.median(stacked, axis=-1)
+    result.GetRasterBand(1).WriteArray(res)
 
-    #path_list = fromdir.split(os.sep) 
-    #print ('pathlist', path_list)
-    
+    # clean up (delete all xml files)
+    for filename in listdir(destdir):
+        if filename.endswith('.xml'):
+            os.remove(os.path.join(destdir, filename))
 
-    outfile = folder + '_' + quantity + '_' + peaks +'.tif'  
-    print ('Creating median: ', outfile)
-    driver = gdal.GetDriverByName('GTiff')
-    result = driver.CreateCopy(data_directory + outfile, gdal.Open(filenames[0]))
-    result.GetRasterBand(1).WriteArray(median)
-    result = None  
+# FIXME: Maybe this could be done by the function maxTIF2meanTIF by settin mode to max???
+def meanTIF2maxTIF(fromdir, destdir, quantity, mode, filepattern='*.tif'):
 
-def meanTIF2maxTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
+    # Ensure destination directory exists
+    os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
+    #print('Confirmed destdir', destdir)
+
 
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
@@ -324,17 +319,16 @@ def meanTIF2maxTIF(fromdir, folder, quantity, peaks, filepattern='*.tif'):
     stacked = np.dstack(res) # We assume that all rasters have the same dimensions
     maximum = np.max(stacked, axis=-1)
 
-    path_list = data_directory.split(os.sep)
-    #print ('pathlist', path_list, path_list[-2])
-
-    outfile = path_list[-2] + '_' + quantity + '_' + peaks + '_peakofpeaks.tif'
+    outfile = os.path.join(destdir, quantity + '_' + mode + '_peakofpeaks.tif')
     print ('Creating peak of peaks: ', outfile)
     driver = gdal.GetDriverByName('GTiff')
-    result = driver.CreateCopy(data_directory + '/' + outfile, gdal.Open(filenames[0]))
+    result = driver.CreateCopy(outfile, gdal.Open(filenames[0]))
     result.GetRasterBand(1).WriteArray(maximum)
-    result = None
     
-    
+    # clean up (delete all xml files)
+    for filename in listdir(destdir):
+        if filename.endswith('.xml'):
+            os.remove(os.path.join(destdir, filename))        
         	
 def write_ARR_results(outname, points_dict, mode):
     """

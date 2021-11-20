@@ -20,10 +20,9 @@ root_directory = os.path.normpath(root_directory)
 storm = os.path.split(root_directory)[-1]
 
 #mode='median'
-mode='mean'
+mode='mean'     # can be only 'mean' or 'median'
   
 quantities = ['WL']#,'D','V','VD']
-peaks = 'mean' # can be only 'mean' or 'median'
 
 # List of Easting, Northing coordinates where you want to extract critical data
 locations = [
