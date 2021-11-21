@@ -320,7 +320,7 @@ def meanTIF2maxTIF(fromdir, destdir, quantity, mode, filepattern='*.tif'):
     maximum = np.max(stacked, axis=-1)
 
     outfile = os.path.join(destdir, quantity + '_' + mode + '_peakofpeaks.tif')
-    print ('Creating peak of peaks: ', outfile)
+    #print ('Creating peak of peaks: ', outfile)
     driver = gdal.GetDriverByName('GTiff')
     result = driver.CreateCopy(outfile, gdal.Open(filenames[0]))
     result.GetRasterBand(1).WriteArray(maximum)
