@@ -16,6 +16,6 @@ sub_folders = [name for name in os.listdir(data_directory) if os.path.isdir(os.p
 for folder in sub_folders:
     fromdir = os.path.join(root_directory, 'SWW', folder)
     destdir = os.path.join(root_directory, 'TIFS', folder)
-    print (fromdir, destdir)
+    #print (fromdir, destdir)
         
     sww2maxTIF(fromdir, destdir, CellSize = CellSize)

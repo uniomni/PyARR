@@ -209,7 +209,7 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     MyTimeStep = 'max' # Used in MakeGeotif and associated filename creation 
     # FIXME (Ole): May move output_quantities and MyTimeStep to the general config section
         
-    print (fromdir, destdir)
+    #print (fromdir, destdir)
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
     #print('Confirmed destdir', destdir)
@@ -226,8 +226,8 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
 
     for filename in filenames:
         head, file = os.path.split(filename)
-        print()
-        print('Converting %s to %s' % (filename, destdir))
+        #print()
+        #print('Converting %s to %s' % (filename, destdir))
         
         storm_pattern, _ = os.path.splitext(file)
         
