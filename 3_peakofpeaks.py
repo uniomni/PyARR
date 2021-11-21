@@ -5,7 +5,7 @@ This script will open a directory of maximum TIF files and calculate
 the mean for each duration (from the 10 patterns) and then it will
 create the peak of peaks from the means or medians as per ARR2019 requirements
 
-by Ole Nielsen - 2021
+by Petar Milevski and Ole Nielsen - 2021
 
 """
 
@@ -25,14 +25,15 @@ sub_folders = [name for name in os.listdir(TIF_directory) if os.path.isdir(os.pa
 for folder in sub_folders:
     for quantity in quantities:
         fromdir = os.path.join(TIF_directory, folder, quantity)
+        destdir = os.path.join(MEAN_directory, quantity) + mode
         output_filename = folder + '_' + quantity + '_' + mode + '.tif' 
 
-        if os.path.isfile(os.path.join(MEAN_directory + '/' + quantity + mode, output_filename)):
+        if os.path.isfile(os.path.join(destdir, output_filename)):
             print('Already computed', output_filename)
         else: 
             print('Computing', output_filename)
         
-            maxTIF2meanTIF(fromdir, MEAN_directory + '/' + quantity + mode, output_filename, mode=mode)
+            maxTIF2meanTIF(fromdir, destdir, output_filename, mode=mode)
             
                     
             
