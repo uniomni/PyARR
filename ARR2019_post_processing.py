@@ -14,6 +14,8 @@ from osgeo import gdal
 from numpy import array, float, resize
 from statistics import median
 from anuga.utilities import plot_utils
+import matplotlib.pyplot as plt
+from anuga.shallow_water.sww_interrogate import get_flow_through_cross_section
 
 """
 1. calculate the average or mean of the 10 numbers.
@@ -195,6 +197,7 @@ def post_process(locations, quantity, data_directory, mode='mean'):
     return max_points_dict
 
     
+
 def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     """Generate geotiff files from ANUGA sww files for four quantities. 
     The maximum values will be stored in the destination files.
@@ -226,7 +229,7 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
 
     for filename in filenames:
         head, file = os.path.split(filename)
-        #print()
+        #print(file)
         #print('Converting %s to %s' % (filename, destdir))
         
         storm_pattern, _ = os.path.splitext(file)
@@ -330,7 +333,54 @@ def meanTIF2maxTIF(fromdir, destdir, quantity, mode, filepattern='*.tif'):
     for filename in listdir(destdir):
         if filename.endswith('.xml'):
             os.remove(os.path.join(destdir, filename))        
-        	
+
+
+
+
+def plot_hydrographs(fromdir, destdir, polyline, filepattern='*.sww'):
+    """Generate geotiff files from ANUGA sww files for four quantities. 
+    The maximum values will be stored in the destination files.
+
+    """
+    # FIXME the looping through the directories does not work and it seems to generate 
+    # a plot for each sww and accumulates the plots until it finishs
+    # and for some reason does not move onto the next directory of SWW's
+    
+    #print (fromdir, destdir)
+    # Ensure destination directory exists
+    os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
+    #print('Confirmed destdir', destdir)
+    
+
+    # Get sww files from data directory
+    pattern = os.path.join(fromdir, filepattern)
+    filenames = glob.glob(pattern) 
+
+    for filename in filenames:
+        head, file = os.path.split(filename)
+        #print('Converting %s to %s' % (filename, destdir))
+                
+        output_filename = os.path.join(destdir, file[0:-4] + '.png')
+                                           
+        if os.path.isfile(output_filename):
+            print('Already computed', output_filename)
+        else: 
+            print('Computing', output_filename)
+
+            time, Q = get_flow_through_cross_section(filename, polyline, verbose=True)
+     
+            plt.plot(time/3600., Q, label=file[0:-4])
+            
+        plt.title('Hydrographs for '+ file[0:-4])
+        plt.legend(loc='best')    
+        plt.grid(b=True, which='major', color='#666666', linestyle='-')
+        plt.minorticks_on()
+        plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
+        plt.xlabel('Time (hours)')
+        plt.ylabel('Flows (m3/sec)')
+        plt.savefig(destdir, file[0:-4] + '.png')
+   	            
+   	                    	
 def write_ARR_results(outname, points_dict, mode):
     """
 
