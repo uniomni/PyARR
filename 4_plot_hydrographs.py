@@ -26,7 +26,10 @@ for folder in sub_folders:
     fromdir = os.path.join(root_directory, 'SWW', folder)
     pattern = os.path.join(fromdir, '*.sww')
     filenames = glob.glob(pattern) 
-
+    
+    # Sort filenames by P1, P2, ..., P10
+    filenames = sorted(filenames, key=lambda x: int("".join([i for i in x if i.isdigit()])))
+    
     # Create name for this plot
     target = os.path.join(destdir, folder + '.png')
     print(f'Saving to {target}')
@@ -43,7 +46,18 @@ for folder in sub_folders:
     # Plot all hydrographs for this folder
     t0 = time.time()        
     for filename in filenames: 
-        _, event = os.path.split(filename)
+        # Extract the event (P1, P2, ...., P10) from the filename to be used as label
+        # This assumes a filename of the form '1%AEP540m_P4_unblocked.sww'
+        _, event = os.path.split(filename)        
+        i = event.find('_P') 
+        j = i + 2
+        while event[j].isdigit():
+            j += 1
+            
+        if i >= 0:
+            label = event[i+1:j]
+        else:
+            label = event[0:-4]
         
         # Check if it has already been cached and make a note in the output stream
         if cache(get_flow_through_cross_section, 
@@ -56,14 +70,14 @@ for folder in sub_folders:
         else:
             flag = 'computing'
 
+        # Compute Hydrograph or retrieve from cache    
         print(f'Processing {filename} - ({flag})')
-                           
         t, Q = cache(get_flow_through_cross_section, 
                      args=(filename, polyline), 
                      kwargs={'verbose': False},
                      dependencies=filename,
                      verbose=False)
-        plt.plot(t/3600., Q, label=event[0:-4])
+        plt.plot(t/3600., Q, label=label)
         plt.legend(loc='best')            
         
     plt.savefig(target)
