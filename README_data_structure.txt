@@ -1,4 +1,5 @@
 DATA STRUCTURE REQUIREMENTS FOR POST PROCESSING WITH PyARR SCRIPTS
+by Petar Milevski and Ole Nielsen - 2021
 
 This file documents the data structure required to run the PyARR
 post processing suite. 
@@ -216,7 +217,7 @@ Directory| Directory|   PEAK OF PEAKS
 Technically, these peaks are not exactly one up from the mean (or meadian) but they are 
 close enough.
 
-If you want the exact value of the one up fromthe mean (or madian) and the Duration/Pattern
+If you want the exact value of the one up from the mean (or madian) and the Duration/Pattern
 that is resposible for it, you can run 2_critical_duration_patterns.py script.
 
 It will find the critical Storm Duration/Pattern at any location in the catchment.
