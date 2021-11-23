@@ -6,6 +6,7 @@ from ARR2019_config import root_directory
 from ARR2019_post_processing import plot_hydrographs
 import matplotlib.pyplot as plt
 from anuga.shallow_water.sww_interrogate import get_flow_through_cross_section
+from anuga.caching import cache
 
 # Enter location poly here 
 #polyline = [(299167.162,6180397.967),(299232.924,6180475.358)] #this one is for Brooks Ck outlet
@@ -42,9 +43,26 @@ for folder in sub_folders:
     # Plot all hydrographs for this folder
     t0 = time.time()        
     for filename in filenames: 
-        print(f'Processing {filename}')
         _, event = os.path.split(filename)
-        t, Q = get_flow_through_cross_section(filename, polyline, verbose=False)
+        
+        # Check if it has already been cached and make a note in the output stream
+        if cache(get_flow_through_cross_section, 
+                 args=(filename, polyline), 
+                 kwargs={'verbose': False},
+                 dependencies=filename,
+                 verbose=False,
+                 test=True):
+            flag = 'cached'
+        else:
+            flag = 'computing'
+
+        print(f'Processing {filename} - ({flag})')
+                           
+        t, Q = cache(get_flow_through_cross_section, 
+                     args=(filename, polyline), 
+                     kwargs={'verbose': False},
+                     dependencies=filename,
+                     verbose=False)
         plt.plot(t/3600., Q, label=event[0:-4])
         plt.legend(loc='best')            
         
