@@ -254,7 +254,7 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
    	            CellSize=CellSize, 
    	            velocity_extrapolation=True, 
    	            min_allowed_height=0.01, 
-   	            EPSG_CODE=28356, # EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web 
+   	            EPSG_CODE=28356, # EPSG_CODE=28356 is for UTM -56, codes for other locations search for EPSG_CODE on the web #28356 GDA1994 # 7856 GDA2020
    	            verbose=False, 
    	            k_nearest_neighbours=3)
                
