@@ -306,7 +306,7 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='
     elif mode == 'max':
         res = np.max(stacked, axis=-1) 
     else:
-		exit('wrong mode choice')
+        exit('wrong mode choice')
 		
     # print ('Creating TIF:', output_filename)
     driver = gdal.GetDriverByName('GTiff')
