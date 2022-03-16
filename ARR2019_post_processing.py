@@ -1,5 +1,4 @@
 """Functions to implement Australian Rainfall and Runoff post processing of ANUGA flood models. 
-
 """
 
 import shutil
@@ -22,9 +21,7 @@ from anuga.shallow_water.sww_interrogate import get_flow_through_cross_section
 2. choose the file which is one up from the average (for example it
 will be file '1%AEP10m_P6_unblocked_depth_max' and return the value
 and filename.
-
 Algorithm is very simplistic but will work well for small data sets.
-
 Ole Nielsen - 2021
 """
 
@@ -65,7 +62,7 @@ def find_average_element(filename_list, mode='mean'):
     if len(filename_list) == 0:
         raise BaseException('Fix your ARR2019_config.py file list  Got an empty list: %s' % filename_list)
     
-    assert mode in ['median', 'mean'], 'Parameter mode must be either median or mean. I got ' % mode
+    assert mode in ['median', 'mean', 'max'], 'Parameter mode must be either median, mean or max. I got ' % mode
     
     # Sort by value (Schwartzian Transform)
     # Swap order, making 
@@ -81,29 +78,49 @@ def find_average_element(filename_list, mode='mean'):
         for y in Y:
             sum += y[0]
         res = sum/len(Y)
-    else:
+    elif mode == 'median':
         # Calculate median
         values = []
         for y in Y:
             values.append(y[0])
         res = median(values)
-    
+    elif mode == 'max':
+        # Calculate maximum
+        values = []
+        for y in Y:
+            values.append(y[0])
+        res = max(values)  
+        #print (res) 
+    else:
+        exit('wrong mode choice')
+    		
     if len(Y) == 1:
         # In case only one filename was passed
-        return res, (filename_list[0], res)    
+        return res, (filename_list[0], res)           
     else:
-       # Now find element immediately greater than average
-       i = 0
-       y = Y[0][0] 
-       while(y <= res):
-           i += 1
-           y = Y[i][0]
-
-       filename = Y[i][1]
-       value = Y[i][0]
-    
-       return res, (filename, value)
-    
+        if mode == 'max':
+			# just find and return the maximum
+            i = 0
+            y = Y[0][0] 
+            while(y == res):
+                i += 1
+                y = Y[i][0]
+		    
+            filename = Y[i][1]
+            value = Y[i][0]
+            return res, (filename, res)        
+        else:            
+        # Now find element immediately greater than average
+            i = 0
+            y = Y[0][0] 
+            while(y <= res):
+                i += 1
+                y = Y[i][0]
+		    
+            filename = Y[i][1]
+            value = Y[i][0]
+        
+            return res, (filename, value)
 
 
         
@@ -116,8 +133,7 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mea
             
     Where value is the value of this quantity at this location and 
     mean the average of this value across all storm patterns as calculate by find_average_element()
-
-    mode is either 'median' or 'mean'
+    mode is either 'median' or 'mean' or 'max'
     """
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
@@ -172,7 +188,6 @@ def post_process(locations, quantity, data_directory, mode='mean'):
     mode is either 'median' or 'mean'
         
     Return points_dict indexed by locations containing one_up_filename, max_value and mean.
-
     
     """
     
@@ -187,7 +202,7 @@ def post_process(locations, quantity, data_directory, mode='mean'):
             fromdir = os.path.join(data_directory, folder, quantity)
             points_dict = critical_duration_pattern(fromdir, locations, mode=mode)
             one_up_filename, value, mean = points_dict[point]
-            
+
             if value > max_value:
                 max_value = value
                 max_points_dict[point] = (one_up_filename, max_value, mean)
@@ -201,7 +216,6 @@ def post_process(locations, quantity, data_directory, mode='mean'):
 def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
     """Generate geotiff files from ANUGA sww files for four quantities. 
     The maximum values will be stored in the destination files.
-
     """
     
     # Relate ANUGA quanties to directories with abbreviated names
@@ -266,7 +280,7 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='
     
     """
     
-    assert mode in ['median', 'mean'], 'Parameter mode must be either median or mean. I got ' % mode
+    assert mode in ['median', 'mean', 'max'], 'Parameter mode must be either median or mean. I got ' % mode
 
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
@@ -287,9 +301,13 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='
     
     if mode == 'mean':
         res = np.mean(stacked, axis=-1)
-    else:
+    elif mode == 'median':
         res = np.median(stacked, axis=-1)    
-
+    elif mode == 'max':
+        res = np.max(stacked, axis=-1) 
+    else:
+		exit('wrong mode choice')
+		
     # print ('Creating TIF:', output_filename)
     driver = gdal.GetDriverByName('GTiff')
     result = driver.CreateCopy(os.path.join(destdir, output_filename), gdal.Open(filenames[0]))
@@ -340,7 +358,6 @@ def meanTIF2maxTIF(fromdir, destdir, quantity, mode, filepattern='*.tif'):
 def plot_hydrographs(fromdir, destdir, polyline, filepattern='*.sww'):
     """Generate geotiff files from ANUGA sww files for four quantities. 
     The maximum values will be stored in the destination files.
-
     """
     # FIXME the looping through the directories does not work and it seems to generate 
     # a plot for each sww and accumulates the plots until it finishs
@@ -383,7 +400,6 @@ def plot_hydrographs(fromdir, destdir, polyline, filepattern='*.sww'):
    	                    	
 def write_ARR_results(outname, points_dict, mode):
     """
-
     """    
     f = open(outname, 'w')
     f.write(f'Easting, Northing, Max_Value, critical_DUR/PAT, {mode.capitalize()}\n')
@@ -391,6 +407,6 @@ def write_ARR_results(outname, points_dict, mode):
     for point in points_dict:
         one_up_filename, value, res = points_dict[point]
         
-        f.write('%.3f, %.3f, %.3f, %s, %.3f\n' % (point[0], point[1], value, 
+        f.write('%.3f,%.3f,%.3f,%s,%.3f\n' % (point[0], point[1], value, 
                                                     os.path.split(one_up_filename)[1], res))
     f.close()
