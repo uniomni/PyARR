@@ -62,7 +62,7 @@ def find_average_element(filename_list, mode='mean'):
     if len(filename_list) == 0:
         raise BaseException('Fix your ARR2019_config.py file list  Got an empty list: %s' % filename_list)
     
-    assert mode in ['median', 'mean', 'max'], 'Parameter mode must be either median, mean or max. I got ' % mode
+    assert mode in ['median', 'mean'], 'Parameter mode must be either median, mean or max. I got ' % mode
     
     # Sort by value (Schwartzian Transform)
     # Swap order, making 
@@ -78,51 +78,98 @@ def find_average_element(filename_list, mode='mean'):
         for y in Y:
             sum += y[0]
         res = sum/len(Y)
-    elif mode == 'median':
+    else:
         # Calculate median
         values = []
         for y in Y:
             values.append(y[0])
         res = median(values)
-    elif mode == 'max':
-        # Calculate maximum
-        values = []
-        for y in Y:
-            values.append(y[0])
-        res = max(values)  
-        #print (res) 
-    else:
-        exit('wrong mode choice')
-    		
+ 
     if len(Y) == 1:
         # In case only one filename was passed
-        return res, (filename_list[0], res)           
+        return res, (filename_list[0], res)    
     else:
-        if mode == 'max':
-			# just find and return the maximum
-            i = 0
-            y = Y[0][0] 
-            while(y == res):
-                i += 1
-                y = Y[i][0]
-		    
-            filename = Y[i][1]
-            value = Y[i][0]
-            return res, (filename, res)        
-        else:            
-        # Now find element immediately greater than average
-            i = 0
-            y = Y[0][0] 
-            while(y <= res):
-                i += 1
-                y = Y[i][0]
-		    
-            filename = Y[i][1]
-            value = Y[i][0]
-        
-            return res, (filename, value)
+       # Now find element immediately greater than average
+       i = 0
+       y = Y[0][0] 
+       while(y <= res):
+           i += 1
+           y = Y[i][0]
+
+       filename = Y[i][1]
+       value = Y[i][0]
+       return res, (filename, value)
 
 
+def find_max_element(filename_list, mode='max'):
+    """ Find element closest to the mean from above
+    
+    Input: List of 2-tuples where each tuple has the form: (string, float)
+    Output: The max value and the 2-tuple, i.e max, (string, float) 
+     
+    Algorithm:
+    1. retrieve max of the 10 numbers.
+    
+    Example
+    
+    With input 
+    
+     filename_list = [('1%AEP10m_P4_unblocked_depth_max', 1.0737015),
+         ('1%AEP10m_P8_unblocked_depth_max', 1.0736489),
+         ('1%AEP10m_P7_unblocked_depth_max', 1.0767846),
+         ('1%AEP10m_P6_unblocked_depth_max', 1.0747306),
+         ('1%AEP10m_P2_unblocked_depth_max', 1.073645),
+         ('1%AEP10m_P10_unblocked_depth_max', 1.0737189),
+         ('1%AEP10m_P1_unblocked_depth_max', 1.0760777),
+         ('1%AEP10m_P5_unblocked_depth_max', 1.0748001),
+         ('1%AEP10m_P9_unblocked_depth_max', 1.0749958),
+         ('1%AEP10m_P3_unblocked_depth_max', 1.0737971)]
+	 
+     The output for filename_list should be 
+     max, (filename, value) e.g.
+     1.0767846, (1%AEP10m_P7_unblocked_depth_max, 1.0767846) 
+	 
+    """
+    
+    if len(filename_list) == 0:
+        raise BaseException('Fix your ARR2019_config.py file list  Got an empty list: %s' % filename_list)
+    
+    assert mode in ['max'], 'Parameter mode must be either median, mean or max. I got ' % mode
+    
+    # Sort by value (Schwartzian Transform)
+    # Swap order, making 
+    # value the first column, filename the second
+    Y = [(d[1], d[0]) for d in filename_list]  
+    
+    # Then sort based on value
+    Y.sort()
+
+    # Calculate max
+    values = []
+    
+    for y in Y:
+        values.append(y[0])
+
+    res = max(values)
+    print ('max', res) 
+    if len(Y) == 1:
+        # In case only one filename was passed
+        return res, (filename_list[0], res)    
+    else:
+       i = 0
+       y = Y[0][0] 
+
+       while (y < res):
+           i += 1
+           y = Y[i][0]
+       # print ('count', i)
+       # print ('y', y)		
+       filename = Y[i][1]
+       value = Y[i][0]
+       #print( res, (filename, value))
+       return res, (filename, value)
+       
+       
         
 def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mean'):
     """Calculate filename with value closest to the mean from above 
@@ -170,14 +217,24 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mea
             data_value = data[row][col] # Data value at this point
 
             filename_list.append((filename, data_value))
+        
+        if mode == 'max':
+            max, (filename, value) = find_max_element(filename_list, mode='max')	
+
+            assert value >= max, 'Internal Error, call Ole'
+                        
+            points_dict[point] = (filename, value, max)     
             
-        mean, (one_up_filename, value) = find_average_element(filename_list, mode=mode)
+            print (point, filename, value, max)
+                        		    
+        else:
+            mean, (one_up_filename, value) = find_average_element(filename_list, mode=mode)
         
-        assert value >= mean, 'Internal Error, call Ole'
-        
-        points_dict[point] = (one_up_filename, value, mean)     
-        
-        print (point, one_up_filename, value, mean)
+            assert value >= mean, 'Internal Error, call Ole'
+            
+            points_dict[point] = (one_up_filename, value, mean)     
+            
+            print (point, one_up_filename, value, mean)
         
     return points_dict
 
@@ -280,7 +337,7 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='
     
     """
     
-    assert mode in ['median', 'mean', 'max'], 'Parameter mode must be either median or mean. I got ' % mode
+    assert mode in ['median', 'mean'], 'Parameter mode must be either median or mean. I got ' % mode
 
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
@@ -301,13 +358,9 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='
     
     if mode == 'mean':
         res = np.mean(stacked, axis=-1)
-    elif mode == 'median':
-        res = np.median(stacked, axis=-1)    
-    elif mode == 'max':
-        res = np.max(stacked, axis=-1) 
     else:
-        exit('wrong mode choice')
-		
+        res = np.median(stacked, axis=-1)    
+
     # print ('Creating TIF:', output_filename)
     driver = gdal.GetDriverByName('GTiff')
     result = driver.CreateCopy(os.path.join(destdir, output_filename), gdal.Open(filenames[0]))
@@ -407,6 +460,6 @@ def write_ARR_results(outname, points_dict, mode):
     for point in points_dict:
         one_up_filename, value, res = points_dict[point]
         
-        f.write('%.3f,%.3f,%.3f,%s,%.3f\n' % (point[0], point[1], value, 
+        f.write('%.3f, %.3f, %.3f, %s, %.3f\n' % (point[0], point[1], value, 
                                                     os.path.split(one_up_filename)[1], res))
     f.close()
