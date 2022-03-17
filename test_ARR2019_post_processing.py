@@ -68,7 +68,7 @@ class TestFindMeanDepth(unittest.TestCase):
         
                 
     def test_level1(self):
-        mean, (filename, stage) = find_average_element(self.X1)
+        mean, (filename, stage) = find_average_element(self.X1, mode='mean')
 
         assert mean == 1.86910183, 'Mean value should have been %f, I got %f' % (1.86910183, mean)
         assert filename == '1%AEP10m_P6_unblocked_stage_max', 'Name should have been %s, I got %s' % ('1%AEP10m_P6_unblocked_stage_max', filename)
