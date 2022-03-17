@@ -151,7 +151,7 @@ def find_max_element(filename_list, mode='max'):
         values.append(y[0])
 
     res = max(values)
-    print ('max', res) 
+    # print ('max', res) 
     if len(Y) == 1:
         # In case only one filename was passed
         return res, (filename_list[0], res)    
@@ -166,7 +166,7 @@ def find_max_element(filename_list, mode='max'):
        # print ('y', y)		
        filename = Y[i][1]
        value = Y[i][0]
-       #print( res, (filename, value))
+       # print( res, (filename, value))
        return res, (filename, value)
        
        
