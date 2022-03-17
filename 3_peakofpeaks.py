@@ -21,24 +21,25 @@ MEAN_directory = os.path.join(root_directory, 'MEANS')
 PEAK_directory = os.path.join(root_directory, 'PEAKS')
 sub_folders = [name for name in os.listdir(TIF_directory) if os.path.isdir(os.path.join(TIF_directory, name))]
 
-
-for folder in sub_folders:
+for mode in mode:
+	
+    for folder in sub_folders:
+        for quantity in quantities:
+            fromdir = os.path.join(TIF_directory, folder, quantity)
+            destdir = os.path.join(MEAN_directory, quantity) + mode
+            output_filename = folder + '_' + quantity + '_' + mode + '.tif' 
+    
+            if os.path.isfile(os.path.join(destdir, output_filename)):
+                print('Already computed', output_filename)
+            else: 
+                print('Computing', output_filename)
+            
+                maxTIF2meanTIF(fromdir, destdir, output_filename, mode=mode)
+                
+                        
+                
+    print('Computing Peak of Peaks!')
     for quantity in quantities:
-        fromdir = os.path.join(TIF_directory, folder, quantity)
-        destdir = os.path.join(MEAN_directory, quantity) + mode
-        output_filename = folder + '_' + quantity + '_' + mode + '.tif' 
-
-        if os.path.isfile(os.path.join(destdir, output_filename)):
-            print('Already computed', output_filename)
-        else: 
-            print('Computing', output_filename)
-        
-            maxTIF2meanTIF(fromdir, destdir, output_filename, mode=mode)
-            
-                    
-            
-print('Computing Peak of Peaks!')
-for quantity in quantities:
-	# FIXME need a check here to skip already created peak of peaks
-    print(quantity)
-    meanTIF2maxTIF(MEAN_directory + '/' + quantity + mode, PEAK_directory, quantity, mode=mode)
+    	# FIXME need a check here to skip already created peak of peaks
+        print(quantity)
+        meanTIF2maxTIF(MEAN_directory + '/' + quantity + mode, PEAK_directory, quantity, mode=mode)
