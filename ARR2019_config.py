@@ -21,10 +21,9 @@ root_directory = os.path.normpath(root_directory)
 # Get storm event from tail of data directory (e.g. 1%AEP)
 storm = os.path.split(root_directory)[-1]
 
-#mode='median'
-mode='mean'     # can be only 'mean' or 'median'
+mode = ['median', 'median', 'max']     # can only be 'mean', 'median' or 'max'
   
-quantities = ['WL']#,'D','V','VD']
+quantities = ['WL']#,'D','V','VD']     # can only be 'WL','D','V','VD'
 
 # List of Easting, Northing coordinates where you want to extract critical data
 locations = [
