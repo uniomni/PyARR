@@ -25,8 +25,8 @@ Algorithm is very simplistic but will work well for small data sets.
 Ole Nielsen - 2021
 """
 
-def find_average_element(filename_list, mode='mean'):
-    """ Find element closest to the mean (or median) from above
+def find_average_element(filename_list, mode):
+    """ Find element closest to the mean from above
     
     Input: List of 2-tuples where each tuple has the form: (string, float)
     Output: The mean value and the 2-tuple where the float is closest to 
@@ -169,7 +169,7 @@ def find_max_element(filename_list, mode='max'):
        
        
         
-def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mean'):
+def critical_duration_pattern(fromdir, locations, mode, filepattern='*.tif'):
     """Calculate filename with value closest to the mean from above 
        at specified locations.
     
@@ -226,7 +226,7 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mea
             print (point, filename, value, max)
                         		    
         else:
-            mean, (one_up_filename, value) = find_average_element(filename_list, mode=mode)
+            mean, (one_up_filename, value) = find_average_element(filename_list, mode)
         
             assert value >= mean, 'Internal Error, call Ole'
             
@@ -237,7 +237,7 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mea
     return points_dict
 
     
-def post_process(locations, quantity, data_directory, mode='mean'):
+def post_process(locations, quantity, data_directory, mode):
     """For each location calculate the maximum value for given quantity.
     
     mode is either 'median' or 'mean'
@@ -255,7 +255,7 @@ def post_process(locations, quantity, data_directory, mode='mean'):
         max_value = 0
         for folder in sub_folders:
             fromdir = os.path.join(data_directory, folder, quantity)
-            points_dict = critical_duration_pattern(fromdir, locations, mode=mode)
+            points_dict = critical_duration_pattern(fromdir, locations, mode)
             one_up_filename, value, mean = points_dict[point]
 
             if value > max_value:
@@ -329,13 +329,13 @@ def sww2maxTIF(fromdir, destdir, CellSize=1.0, filepattern='*.sww'):
                
 
 
-def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='*.tif'):
+def maxTIF2meanTIF(fromdir, destdir, output_filename, mode, filepattern='*.tif'):
     """
     Take maximum for each duration and turn them into a mean (or median) tif file.
     
     """
     
-    assert mode in ['median', 'mean'], 'Parameter mode must be either median or mean. I got ' % mode
+    assert mode in ['median', 'mean', 'max'], 'Parameter mode must be either median or mean. I got ' % mode
 
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
@@ -356,9 +356,13 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode='mean', filepattern='
     
     if mode == 'mean':
         res = np.mean(stacked, axis=-1)
-    else:
+    elif mode == 'median':
         res = np.median(stacked, axis=-1)    
-
+    elif mode == 'max':
+        res = np.max(stacked, axis=-1)  
+    else:
+        exit('wrong mode choice')
+          
     # print ('Creating TIF:', output_filename)
     driver = gdal.GetDriverByName('GTiff')
     result = driver.CreateCopy(os.path.join(destdir, output_filename), gdal.Open(filenames[0]))
