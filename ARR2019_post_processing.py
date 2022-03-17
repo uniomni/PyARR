@@ -62,7 +62,7 @@ def find_average_element(filename_list, mode='mean'):
     if len(filename_list) == 0:
         raise BaseException('Fix your ARR2019_config.py file list  Got an empty list: %s' % filename_list)
     
-    assert mode in ['median', 'mean'], 'Parameter mode must be either median, mean or max. I got ' % mode
+    assert mode in ['median', 'mean'], 'Parameter mode must be either median or mean. I got ' % mode
     
     # Sort by value (Schwartzian Transform)
     # Swap order, making 
@@ -134,7 +134,7 @@ def find_max_element(filename_list, mode='max'):
     if len(filename_list) == 0:
         raise BaseException('Fix your ARR2019_config.py file list  Got an empty list: %s' % filename_list)
     
-    assert mode in ['max'], 'Parameter mode must be either median, mean or max. I got ' % mode
+    assert mode in ['max'], 'Parameter mode must be max. I got ' % mode
     
     # Sort by value (Schwartzian Transform)
     # Swap order, making 
@@ -149,24 +149,22 @@ def find_max_element(filename_list, mode='max'):
     
     for y in Y:
         values.append(y[0])
-
     res = max(values)
-    # print ('max', res) 
+
     if len(Y) == 1:
         # In case only one filename was passed
         return res, (filename_list[0], res)    
     else:
+	   # Now find max element
        i = 0
        y = Y[0][0] 
 
        while (y < res):
            i += 1
            y = Y[i][0]
-       # print ('count', i)
-       # print ('y', y)		
+		
        filename = Y[i][1]
        value = Y[i][0]
-       # print( res, (filename, value))
        return res, (filename, value)
        
        
@@ -223,7 +221,7 @@ def critical_duration_pattern(fromdir, locations, filepattern='*.tif', mode='mea
 
             assert value >= max, 'Internal Error, call Ole'
                         
-            points_dict[point] = (filename, value, max)     
+            points_dict[point] = (filename, value, max) 
             
             print (point, filename, value, max)
                         		    
