@@ -26,7 +26,7 @@ Ole Nielsen - 2021
 """
 
 def find_average_element(filename_list, mode='mean'):
-    """ Find element closest to the mean from above
+    """ Find element closest to the mean (or median) from above
     
     Input: List of 2-tuples where each tuple has the form: (string, float)
     Output: The mean value and the 2-tuple where the float is closest to 
