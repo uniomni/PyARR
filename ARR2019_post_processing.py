@@ -334,13 +334,12 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode, filepattern='*.tif')
     Take maximum for each duration and turn them into a mean (or median) tif file.
     
     """
-    
+                
     assert mode in ['median', 'mean', 'max'], 'Parameter mode must be either median or mean. I got ' % mode
 
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
-    #print('Confirmed destdir', destdir)
-    
+    #print('Confirmed destdir', destdir)  
         
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
@@ -369,18 +368,14 @@ def maxTIF2meanTIF(fromdir, destdir, output_filename, mode, filepattern='*.tif')
     
     result.GetRasterBand(1).WriteArray(res)
 
-    # clean up (delete all xml files)
-    for filename in listdir(destdir):
-        if filename.endswith('.xml'):
-            os.remove(os.path.join(destdir, filename))
+
 
 # FIXME: Maybe this could be done by the function maxTIF2meanTIF by settin mode to max???
 def meanTIF2maxTIF(fromdir, destdir, quantity, mode, filepattern='*.tif'):
-
+                
     # Ensure destination directory exists
     os.makedirs(destdir, exist_ok=True)  # succeeds even if directory exists.
     #print('Confirmed destdir', destdir)
-
 
     pattern = os.path.join(fromdir, filepattern)
     filenames = glob.glob(pattern) 
@@ -400,13 +395,6 @@ def meanTIF2maxTIF(fromdir, destdir, quantity, mode, filepattern='*.tif'):
     driver = gdal.GetDriverByName('GTiff')
     result = driver.CreateCopy(outfile, gdal.Open(filenames[0]))
     result.GetRasterBand(1).WriteArray(maximum)
-    
-    # clean up (delete all xml files)
-    # Doesnt seem to work
-    for filename in listdir(destdir):
-        if filename.endswith('.xml'):
-            os.remove(os.path.join(destdir, filename))        
-
 
 
 
