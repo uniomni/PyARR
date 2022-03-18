@@ -1,6 +1,10 @@
-"""Second script to compute the ARR2019 post processing
+"""
+Second script to compute the ARR2019 post processing
 This script returns mean, median and maximum quantity and associated filename at a location
 Handy for determining critical durations/patterns for new ARR2019 methodology
+
+by Petar Milevski and Ole Nielsen - 2021
+
 """
 
 import os
