@@ -1,8 +1,10 @@
-""" Config file
+""" 
+Config file
+Enter directory location (path), quantities, mode and locations 
+Required when using 2_critical_duration_patterns.py
     
-    Enter quantities and grid resolution (cell size) you want to process for 1_sww2maxTIF.py
-    locations are required when using 2_critical_duration_patterns.py
-    
+by Petar Milevski and Ole Nielsen - 2021
+
 """
 
 import os
