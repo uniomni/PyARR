@@ -15,7 +15,7 @@ import shutil
 from os.path import *
 from os import listdir
 from ARR2019_config import storm, mode, quantities, root_directory
-from ARR2019_post_processing import maxTIF2meanTIF, meanTIF2maxTIF
+from ARR2019_post_processing import maxTIF2meanTIF, meanTIF2maxTIF, delete_xml_files
 
 TIF_directory = os.path.join(root_directory, 'TIFS')
 MEAN_directory = os.path.join(root_directory, 'MEANS')
@@ -37,12 +37,9 @@ for mode in mode:
                 print('Computing', output_filename)
             
                 maxTIF2meanTIF(fromdir, destdir, output_filename, mode = mode)
-               
             # delete xml files
-            for filename in listdir(destdir):
-                if filename.endswith('.xml'):
-                    os.remove(os.path.join(destdir, filename)) 
-                
+            delete_xml_files(destdir, output_filename)     
+                       
     # create peak of peaks            
     for quantity in quantities:   	
         output_filename = quantity + '_' + mode + '_peakofpeaks.tif' 
@@ -54,6 +51,4 @@ for mode in mode:
             meanTIF2maxTIF(MEAN_directory + '/' + quantity + mode, PEAK_directory, quantity, mode = mode)
     
         # delete xml files
-        for filename in listdir(PEAK_directory):
-            if filename.endswith('.xml'):
-                os.remove(os.path.join(PEAK_directory, filename))
+        delete_xml_files(PEAK_directory, output_filename)
