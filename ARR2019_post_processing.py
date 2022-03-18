@@ -453,3 +453,11 @@ def write_ARR_results(outname, points_dict, mode):
         f.write('%.3f, %.3f, %.3f, %s, %.3f\n' % (point[0], point[1], value, 
                                                     os.path.split(one_up_filename)[1], res))
     f.close()
+
+
+def delete_xml_files(destdir, filename):
+    """
+    """    
+    for filename in listdir(destdir):
+        if filename.endswith('.xml'):
+            os.remove(os.path.join(destdir, filename))
