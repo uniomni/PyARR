@@ -2,6 +2,7 @@
 
 It will convert a collection of sww files to TIF with maximum values of selected quantities.
 
+by Petar Milevski and Ole Nielsen - 2021
 """
 
 import os.path
