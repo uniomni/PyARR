@@ -445,16 +445,14 @@ def write_ARR_results(outname, points_dict, mode):
     """
     """    
     f = open(outname, 'w')
-    
+    f.write(f'Easting, Northing, Max_Value, critical_DUR/PAT, {mode.capitalize()}\n')
     
     for point in points_dict:        
         if mode == 'max':	
-            f.write(f'Easting, Northing, Max_Value, critical_DUR/PAT\n')	
             filename, max, res = points_dict[point]           
             mylist = os.path.split(filename[0])          
             f.write('%.3f, %.3f, %s, %s\n' % (point[0], point[1], filename[1], mylist[1]))		
-        else:
-            f.write(f'Easting, Northing, Max_Value, critical_DUR/PAT, {mode.capitalize()}\n')
+        else:            
             one_up_filename, value, res = points_dict[point]           
             f.write('%.3f, %.3f, %.3f, %s, %.3f\n' % (point[0], point[1], value, os.path.split(one_up_filename)[1], res))
 	     
