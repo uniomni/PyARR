@@ -155,9 +155,9 @@ values for each Duration and creates a TIF of the means (or medians)
 Root     |          |                     |  
 Directory| Directory| Directory           | mean (or median)_TIF file
 ===========================================================================
-1%AEP    |   MEANS  | Dmean (or Dmedian)  |  1%AEP10m_unblocked_D_mean.tif
-         |          |                     |  1%AEP15m_unblocked_D_mean.tif
-         |          |                     |  1%AEP20m_unblocked_D_mean.tif
+1%AEP    |   MEANS  | Dmean               |  1%AEP10m_unblocked_D_mean.tif
+         |          | (or Dmedian)        |  1%AEP15m_unblocked_D_mean.tif
+         |          | (or Dmax)           |  1%AEP20m_unblocked_D_mean.tif
          |          |                     |  1%AEP25m_unblocked_D_mean.tif
          |          |                     |  1%AEP30m_unblocked_D_mean.tif
          |          |                     |  1%AEP45m_unblocked_D_mean.tif         
@@ -167,9 +167,9 @@ Directory| Directory| Directory           | mean (or median)_TIF file
          |          |                     | 1%AEP180m_unblocked_D_mean.tif  
          |          |                     |  etc etc
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                 
-         |          | Vmean (or Vmedian)  |  1%AEP10m_unblocked_V_mean.tif
-         |          |                     |  1%AEP15m_unblocked_V_mean.tif
-         |          |                     |  1%AEP20m_unblocked_V_mean.tif
+         |          | Vmean               |  1%AEP10m_unblocked_V_mean.tif
+         |          | (or Vmedian)        |  1%AEP15m_unblocked_V_mean.tif
+         |          | (or Vmax)           |  1%AEP20m_unblocked_V_mean.tif
          |          |                     |  1%AEP25m_unblocked_V_mean.tif
          |          |                     |  1%AEP30m_unblocked_V_mean.tif
          |          |                     |  1%AEP45m_unblocked_V_mean.tif        
@@ -179,9 +179,9 @@ Directory| Directory| Directory           | mean (or median)_TIF file
          |          |                     | 1%AEP180m_unblocked_V_mean.tif 
          |          |                     |  etc etc  
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   
-         |          |VDmean (or VDmedian) |  1%AEP10m_unblocked_VD_mean.tif
-         |          |                     |  1%AEP15m_unblocked_VD_mean.tif
-         |          |                     |  1%AEP20m_unblocked_VD_mean.tif
+         |          | VDmean              |  1%AEP10m_unblocked_VD_mean.tif
+         |          | (or Vdmedian)       |  1%AEP15m_unblocked_VD_mean.tif
+         |          | (or Vdmax)          |  1%AEP20m_unblocked_VD_mean.tif
          |          |                     |  1%AEP25m_unblocked_VD_mean.tif
          |          |                     |  1%AEP30m_unblocked_VD_mean.tif
          |          |                     |  1%AEP45m_unblocked_VD_mean.tif        
@@ -191,9 +191,9 @@ Directory| Directory| Directory           | mean (or median)_TIF file
          |          |                     | 1%AEP180m_unblocked_VD_mean.tif 
          |          |                     |  etc etc  
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++   
-         |          |WLmean (or WLmedian) |  1%AEP10m_unblocked_WL_mean.tif
-         |          |                     |  1%AEP15m_unblocked_WL_mean.tif
-         |          |                     |  1%AEP20m_unblocked_WL_mean.tif
+         |          | WLmean              |  1%AEP10m_unblocked_WL_mean.tif
+         |          | (or WLmedian)       |  1%AEP15m_unblocked_WL_mean.tif
+         |          | (or WLmax)          |  1%AEP20m_unblocked_WL_mean.tif
          |          |                     |  1%AEP25m_unblocked_WL_mean.tif
          |          |                     |  1%AEP30m_unblocked_WL_mean.tif
          |          |                     |  1%AEP45m_unblocked_WL_mean.tif         
